@@ -29,7 +29,7 @@ What is it: giveaway
 
 - DONE -
 
-Updates: Refresh giveaway embed, use slash commands.
+Updates: Refresh giveaway embed, make embed look better (in #addon-ideas)
 
 
 
