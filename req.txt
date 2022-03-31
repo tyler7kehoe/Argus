@@ -1,0 +1,1 @@
+You need py-cprd (pip install py-cord==2.0.0b4)

@@ -1,0 +1,19 @@
+TODO: 
+- giveaway: # DONE BY WEDNESDAY #
+	- **x roll reaction: if they are a holder, they can only react if they have that role. The person creating the giveaway should be able to select the people who can react to the giveaway. 
+	- **make the giveway possible for multiple winnners - done by adding new parameter.
+	- read epoch time - bot goes down (computer resets every day at 5am)
+	- make times selectable by s m h d - by command 
+	- @commands.has_permisions rather than doing it the other way - do it in all files -> if they can ban member they can do it. 
+	- discord.py 2.0, switch over? 
+	- IDEA: create a giveaway thats written to a file that way when the bot is offline the data is not lost. Store on database? i.e. MongoDB
+	- IDEA: create a list of active giveaways? each time a giveaway is created add it to a data structure that contains all active giveaways with their properties.
+	
+	-Multiple winners
+-Announces winners with Username & wallet address to a specific channel (can be specified in code, doens't have to be by user) and sends congrats to winners
+- winners paired with wallet address, possibly multiple messages to stay under discord message character cap.
+- Specified channel to send the giveaway to
+
+(not priority)
+-Role specific
+-epoch time so if bot restarts, still ends on time
