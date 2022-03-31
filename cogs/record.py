@@ -13,7 +13,7 @@ class default(commands.Cog):
 
     @commands.command(guild_ids=[int(os.getenv("GUILD_ID"))])
     async def logging(self, ctx):
-        button_enter = Button(label='Log Your Address Here!', style=discord.ButtonStyle.green, emoji="☠")
+        button_enter = Button(label='Log Your Address Here!', style=discord.ButtonStyle.green)
         button_grab = Button(label='Get your address!', style=discord.ButtonStyle.blurple, emoji="📄")
 
         async def button_callback(interaction):
