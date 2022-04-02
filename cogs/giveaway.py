@@ -25,41 +25,44 @@ class giveaway(commands.Cog):
 
         def check(m):
             return m.content and m.channel == ctx.channel
+        try:
+            await ctx.respond('How long would you like the giveaway to go for? Submit in the following format: [1s, 1m, 1h, 1d].')
+            time_msg = await self.bot.wait_for("message", check=check, timeout=45)
+            gtime = time_msg.content
 
-        await ctx.respond('How long would you like the giveaway to go for? Submit in the following format: [1s, 1m, 1h, 1d].')
-        time_msg = await self.bot.wait_for("message", check=check)
-        gtime = time_msg.content
+            await ctx.respond('How many winners?')
+            num_of_winners = await self.bot.wait_for("message", check=check, timeout=45)
+            num_of_winners = num_of_winners.content
 
-        await ctx.respond('How many winners?')
-        num_of_winners = await self.bot.wait_for("message", check=check)
-        num_of_winners = num_of_winners.content
+            await ctx.respond('What is the prize you will be giving away?')
+            prize_msg = await self.bot.wait_for("message", check=check, timeout=45)
+            prize = prize_msg.content
 
-        await ctx.respond('What is the prize you will be giving away?')
-        prize_msg = await self.bot.wait_for("message", check=check)
-        prize = prize_msg.content
+            await ctx.respond('What channel would you like the giveaway to be held in? Enter as #channel-name')
+            channel_loc = await self.bot.wait_for("message", check=check, timeout=45)
+            chID_stripped = channel_loc.content[2:]
+            chID_stripped = chID_stripped[:-1]
+            ch = self.bot.get_channel(int(chID_stripped))
 
-        await ctx.respond('What channel would you like the giveaway to be held in? Enter as #channel-name')
-        channel_loc = await self.bot.wait_for("message", check=check)
-        chID_stripped = channel_loc.content[2:]
-        chID_stripped = chID_stripped[:-1]
-        ch = self.bot.get_channel(int(chID_stripped))
-
-
-        await ctx.respond('What channel would you like the giveaway winner list to be posted to?'
-                          'This result contains no mentions and can be used for your own records.'
-                          ' Enter as #channel-name')
-        channel_loc = await self.bot.wait_for("message", check=check)
-        chID_stripped = channel_loc.content[2:]
-        chID_stripped = chID_stripped[:-1]
-        chWIN = self.bot.get_channel(int(chID_stripped))        #TODO: make the channels get logged into JSON
-
+            await ctx.respond('What channel would you like the giveaway winner list to be posted to?'
+                              'This result contains no mentions and can be used for your own records.'
+                              ' Enter as #channel-name')
+            channel_loc = await self.bot.wait_for("message", check=check, timeout=45)
+            chID_stripped = channel_loc.content[2:]
+            chID_stripped = chID_stripped[:-1]
+            chWIN = self.bot.get_channel(int(chID_stripped))
+        except asyncio.TimeoutError:
+            await ctx.respond('You took too long to respond! Please call the command again.')
+            return
+        except ValueError:
+            await ctx.respond('An input error likely occured. Please call the command again.')
+            return
 
         numOfWinners = int(num_of_winners)
 
         embed = discord.Embed(title=' New Giveaway!', description=f'\n{ctx.author.mention} is giving away **{prize}**!!'
                                                                      f'\n# of winners:  **{numOfWinners}**\n\n'
                                                                         'React with 🎉 to enter!!!\n', color=0xf1c40f)
-
 
         # Find giveaway time
         time_convert = {"s":1, "m":60, "h":3600,"d":86400}
@@ -69,12 +72,12 @@ class giveaway(commands.Cog):
         gawtime = intTime * multiplier
 
         # Calculate time and date the giveaway ends
-        dt = datetime.utcnow()
+        dt = datetime.now()
         td = timedelta(seconds=gawtime)
         future = dt + td
-        gawEnd = future.strftime("%m/%d/%Y, %H:%M %p")
-
-        embed.set_footer(text=f'Length of giveaway: {gtime.casefold()}\nGiveaway ends at: {gawEnd} UTC')
+        unixTimestamp = (datetime.timestamp(future))
+        unixTimestamp = int(unixTimestamp)
+        embed.add_field(name=f'Length of giveaway: {gtime.casefold()}', value=f'Giveaway ends at: <t:{unixTimestamp}:f>')
 
         gaw_msg = await ch.send(embed=embed)
         self.send_to_file(gaw_msg.id, (future - datetime(1970, 1, 1)).total_seconds(), numOfWinners, prize, ch, chWIN)
@@ -179,6 +182,9 @@ class giveaway(commands.Cog):
             if guild.premium_tier > 1:
                 private_thread = await mes.channel.create_thread(name=f'{end_prize} Giveaway Winners', type=None)
                 await private_thread.send(winnerOutputNoWallet)
+        update_embed = discord.Embed(title=f':gift: {end_prize} Giveaway Winners :gift:', description=f'{winnerOutputNoWallet}')
+        update_embed.add_field(name='Giveaway ended:', value=f'<t:{int(datetime.timestamp(datetime.now()))}:R>')
+        await new_gaw_msg.edit(embed=update_embed)
         with open("giveaways.json", "r") as _:
             data = json.load(_)
             for item in data:
