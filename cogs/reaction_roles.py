@@ -1,11 +1,11 @@
 import discord
-import os
 from discord.ext import commands
 from discord.ext.commands.context import Context
 from dotenv import load_dotenv
-from discord_slash import SlashCommand
+import json
 
 load_dotenv()
+
 global channel_id, emoji_list, rolls_list, role_dict
 
 
@@ -14,9 +14,10 @@ class reaction_roles(commands.Cog):
         self.bot: commands.Bot = bot
 
     @commands.has_permissions(manage_webhooks=True)
-    @commands.slash_command(name="reaction_roles", description="Click reactions for reaction roles", guild_ids=[int(os.getenv("GUILD_ID"))])
-    async def reactionrolls(self, ctx: Context):
+    @commands.slash_command(name="reaction_roles", description="Click reactions for reaction roles")
+    async def reactionroles(self, ctx: Context):
         global channel_id, emoji_list, rolls_list, role_dict
+
         def check(m):
             return m.content and m.channel == ctx.channel
         await ctx.respond('What roles will be included in the reaction roles embed?')
@@ -52,10 +53,12 @@ class reaction_roles(commands.Cog):
         reaction_roles_msg = await chID.send(embed=embed)
         for i in emojis:
             await reaction_roles_msg.add_reaction(i)
+        await self.log_msg(reaction_roles_msg.id, reaction_roles_msg.channel.id, rolls_list, emoji_list)
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         global channel_id, emoji_list, rolls_list, role_dict
+
         if reaction.message.channel.id != channel_id.id:
             return
         role_name = role_dict[reaction.emoji]
@@ -72,9 +75,38 @@ class reaction_roles(commands.Cog):
         role = discord.utils.get(reaction.message.guild.roles, name=role_name)
         await user.remove_roles(role)
 
-    # TODO: Check for active reaction roles
+    # TODO: Create JSON, input message/channel id's as well as corresponding roles and emojis.
 
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        message = await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
+        with open("reaction_roles.json", "r") as _:
+            data = json.load(_)
+            for item in data:
+                if item["message_id"] == message.id:
+                    obj = item
+        # if await message.channel.fetch_message(payload.message_id) != obj["message_id"]:
+        #     return
+        role = "role1"
+        if payload.member != self.bot.user:
+            await payload.member.add_roles(role)
 
+    async def log_msg(self, message_id, ch_id, roles, emojis):
+        with open("reaction_roles.json", "r") as _:
+            data = json.load(_)
+
+            new_set = {
+                "message_id": message_id,
+                "host_channel": ch_id,
+                "roles": roles,
+                "emojis": emojis
+            }
+
+            if new_set not in data:
+                data.append(new_set)
+
+        with open("reaction_roles.json", "w") as _:
+            json.dump(obj=data, fp=_, indent=4)
 
 
 def setup(bot):
