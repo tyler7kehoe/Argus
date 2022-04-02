@@ -114,13 +114,13 @@ class giveaway(commands.Cog):
     async def reactivate_giveaway(self, message_id, end_time, num_winners, currPrize, ch, chWIN):
         print(f"[Bot] Giveaway {message_id} of {currPrize} has been reactivated!")
         await asyncio.sleep(end_time-time.time())
+        ch = self.bot.get_channel(ch)
+        chWIN = self.bot.get_channel(chWIN)
         await self.end_gaw(message_id, num_winners, currPrize, ch, chWIN)
 
     async def end_gaw(self, message_id, num_winners, end_prize, ch, chWIN):
-        ch = self.bot.get_channel(ch)
-        chWIN = self.bot.get_channel(chWIN)
-
         new_gaw_msg = await ch.fetch_message(message_id)
+        guild = new_gaw_msg.guild
         # get collection of users who reacted
         users = set()
         for reaction in new_gaw_msg.reactions:
@@ -157,24 +157,28 @@ class giveaway(commands.Cog):
         if numOfCharsInWinnerNoWallet >= 2000:
             lines = textwrap.wrap(winnerOutputNoWallet, 1900, break_long_words=False)
             mes = await ch.send(lines[0])  # Send winners to giveaway channel
-            private_thread = await mes.channel.create_thread(name=f'{end_prize} Giveaway Winners', type=None)
-            await private_thread.send(lines[0])
+            if guild.premium_tier > 1:
+                private_thread = await mes.channel.create_thread(name=f'{end_prize} Giveaway Winners', type=None)
+                await private_thread.send(lines[0])
             for i in lines[1:]:
                 await ch.send(i)  # Send winners to giveaway channel
-                await private_thread.send(lines[i])
+                if guild.premium_tier > 1:
+                    await private_thread.send(lines[i])
         elif numOfCharsInWinnerOutput >= 2000:
             lines = textwrap.wrap(winnerOutput, 1900, break_long_words=False)
             for i in lines:
                 await chWIN.send(i)
             if numOfCharsInWinnerNoWallet < 2000:
                 mes = await ch.send(winnerOutputNoWallet)  # Send winners to giveaway channel
-                private_thread = await mes.channel.create_thread(name=f'{end_prize} Giveaway Winners', type=None)
-                await private_thread.send(winnerOutputNoWallet)
+                if guild.premium_tier > 1:
+                    private_thread = await mes.channel.create_thread(name=f'{end_prize} Giveaway Winners', type=None)
+                    await private_thread.send(winnerOutputNoWallet)
         else:
             await chWIN.send(winnerOutput)  # Send winners and wallets to winners channel
             mes = await ch.send(winnerOutputNoWallet)  # Send winners to giveaway channel
-            private_thread = await mes.channel.create_thread(name=f'{end_prize} Giveaway Winners', type=None)
-            await private_thread.send(winnerOutputNoWallet)
+            if guild.premium_tier > 1:
+                private_thread = await mes.channel.create_thread(name=f'{end_prize} Giveaway Winners', type=None)
+                await private_thread.send(winnerOutputNoWallet)
         with open("giveaways.json", "r") as _:
             data = json.load(_)
             for item in data:
