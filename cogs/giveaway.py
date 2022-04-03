@@ -77,7 +77,7 @@ class giveaway(commands.Cog):
         future = dt + td
         unixTimestamp = (datetime.timestamp(future))
         unixTimestamp = int(unixTimestamp)
-        embed.add_field(name=f'Length of giveaway: {gtime.casefold()}', value=f'Giveaway ends at: <t:{unixTimestamp}:f>')
+        embed.add_field(name=f'Length of giveaway: {gtime.casefold()}', value=f'Giveaway ends: <t:{unixTimestamp}:f>\n(<t:{unixTimestamp}:R>)')
 
         gaw_msg = await ch.send(embed=embed)
         self.send_to_file(gaw_msg.id, (future - datetime(1970, 1, 1)).total_seconds(), numOfWinners, prize, ch, chWIN)
