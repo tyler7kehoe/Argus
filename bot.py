@@ -1,10 +1,8 @@
 import discord
 import os
-
 from discord.ext import commands
-
+from asyncio import sleep
 from dotenv import load_dotenv
-
 from cogs.giveaway import giveaway
 
 load_dotenv()
@@ -36,5 +34,14 @@ async def on_ready():
     print(f"[Bot] I have started up and logged in {bot.user.name}#{bot.user.discriminator}!")
     g = giveaway(bot)
     await g.check_for_active_giveaways(bot)
+
+
+@bot.event
+async def on_member_join(member):
+    await sleep(10*60)
+    for channel in member.guild.channels:
+        if channel.name.startswith('member'):
+            await channel.edit(name=f'Members | {member.guild.member_count}')
+            break
 
 bot.run(os.getenv("TOKEN"))
