@@ -52,6 +52,7 @@ class reaction_roles(commands.Cog):
 
         for emoji in role_dict.keys():
             embed.add_field(name=f'{emoji} =', value=f'{discord.utils.get(chID.guild.roles, name=role_dict[emoji]).mention}')
+        embed.set_footer(text='Please react to the emoji of your desired role')
 
         reaction_roles_msg = await chID.send(embed=embed)
         for i in emojis:
