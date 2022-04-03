@@ -19,10 +19,15 @@ class reaction_roles(commands.Cog):
         def check(m):
             return m.content and m.channel == ctx.channel
         try:
-            await ctx.respond('What roles will be included in the reaction roles embed?')
+            await ctx.respond('What roles will be included in the reaction roles embed? '
+                              'Make sure to use the @ specifier for each role.')
             rolls = await self.bot.wait_for("message", check=check, timeout=240)
             rolls_list = rolls.content.split()
-
+            for i in range(len(rolls_list)):
+                rolls_list[i] = rolls_list[i][3:]
+                rolls_list[i] = rolls_list[i][:-1]
+                rolls_list[i] = ctx.guild.get_role(int(rolls_list[i]))
+                rolls_list[i] = rolls_list[i].name
             await ctx.respond('What emojis would you like to use for the users to select their roles? Please have the emojis'
                               ' separated by a space and correspond to the order you listed the roles')
             proper_length = False
