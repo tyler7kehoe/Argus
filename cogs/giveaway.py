@@ -60,7 +60,7 @@ class giveaway(commands.Cog):
 
         numOfWinners = int(num_of_winners)
 
-        embed = discord.Embed(title=' New Giveaway!', description=f'\n{ctx.author.mention} is giving away **{prize}**!!'
+        embed = discord.Embed(title=':gift: New Giveaway! :gift:', description=f'\n{ctx.author.mention} is giving away **{prize}**!!'
                                                                      f'\n# of winners:  **{numOfWinners}**\n\n'
                                                                         'React with 🎉 to enter!!!\n', color=0xf1c40f)
 
