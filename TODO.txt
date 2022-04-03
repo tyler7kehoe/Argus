@@ -12,9 +12,11 @@ Must have permission: ban_members
 
 What is it: Reaction roles 
 
-What it does: If a user reacts with a certain emoji it will give role
+- DONE - 
 
-Must have permission: Admin
+Updates: 
+
+Tests: Load with over 10 roles - make sure embed looks good
 
 
 
