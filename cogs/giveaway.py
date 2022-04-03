@@ -60,10 +60,9 @@ class giveaway(commands.Cog):
 
         numOfWinners = int(num_of_winners)
 
-        embed = discord.Embed(title=':gift: New Giveaway! :gift:', description=f'\n{ctx.author.mention} is giving away **{prize}**!!'
-                                                                     f'\n# of winners:  **{numOfWinners}**\n\n'
-                                                                        'React with 🎉 to enter!!!\n', color=0xf1c40f)
-
+        embed = discord.Embed(title=':gift: New Giveaway! :gift:', description=f'\n{ctx.author.mention} is giving away **{prize}**!!\n\n'
+                                                                     'React with 🎉 to enter!!!\n\n', color=0xf1c40f)
+        embed.add_field(name=':medal: Winners:', value=f'{numOfWinners}', inline=True)
         # Find giveaway time
         time_convert = {"s":1, "m":60, "h":3600,"d":86400}
         operand = gtime[-1].casefold()
@@ -77,7 +76,7 @@ class giveaway(commands.Cog):
         future = dt + td
         unixTimestamp = (datetime.timestamp(future))
         unixTimestamp = int(unixTimestamp)
-        embed.add_field(name=f'Length of giveaway: {gtime.casefold()}', value=f'Giveaway ends: <t:{unixTimestamp}:f>\n(<t:{unixTimestamp}:R>)')
+        embed.add_field(name=f'Length of giveaway: {gtime.casefold()}', value=f'Giveaway ends: <t:{unixTimestamp}:f>\n(<t:{unixTimestamp}:R>)', inline=False)
 
         gaw_msg = await ch.send(embed=embed)
         self.send_to_file(gaw_msg.id, (future - datetime(1970, 1, 1)).total_seconds(), numOfWinners, prize, ch, chWIN)
