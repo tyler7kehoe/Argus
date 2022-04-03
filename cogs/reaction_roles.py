@@ -95,6 +95,10 @@ class reaction_roles(commands.Cog):
                 return
         num = -2
         emList = obj['emojis']
+        # Remove reactions not in role list
+        if emoji not in emList:
+            await message.remove_reaction(emoji, payload.member)
+        # Finds location of emoji in list so we know what role to add
         for i in range(len(emList)):
             if emList[i] == emoji:
                 num = i
