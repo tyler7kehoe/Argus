@@ -3,6 +3,7 @@ import os
 from discord.ext import commands
 from discord.ext.commands.context import Context
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 
@@ -23,9 +24,20 @@ class openseas_sales(commands.Cog):
         print("TESTTESTEST")
         if channel == None or contract_address == None:
             return await ctx.send('Usage: gcreate {channel name} {contract address}')
-        print(channel)
         ch = self.bot.get_channel(int(channel[2:-1]))
         await ctx.respond(ch)
+        await ctx.respond(contract_address)
+
+        params = "asset_contract_address=" + contract_address
+
+        url = "https://api.opensea.io/api/v1/events?" + params
+
+        headers = {"Accept": "application/json"}
+
+        response = requests.request("GET", url, headers=headers)
+
+        print(response.text)
+
 
 def setup(bot):
     bot.add_cog(openseas_sales(bot))

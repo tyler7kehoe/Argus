@@ -2,11 +2,15 @@ If these could all be slash commands <3
   -> slash commands require ctx.respond() instead of ctx.send()
 
 
+
+
 What is it: Help
 
 What is does: Lists all of the commands and how to use them
 
 Must have permission: ban_members
+
+
 
 
 
@@ -20,10 +24,14 @@ Tests: Load with over 10 roles - make sure embed looks good
 
 
 
+
+
 What is it: moderation
 
 What it does: When a mass amount of people join at once or a lot join with the same username it will auto ban (also known as anti spam. Beemo is a good example)
 Must have permission: automaticlly done by bot
+
+
 
 
 
@@ -35,6 +43,8 @@ Updates: Refresh giveaway embed, make embed look better (in #addon-ideas)
 
 
 
+
+
 What is it: Webhook Deleter
 
 What it does: automatically deleting webhooks and banning the person who added it (this is a big one in the NFT space.) 
@@ -42,11 +52,21 @@ What it does: automatically deleting webhooks and banning the person who added i
 Must have permission: Automatic
 
 
+
+
 What is it: Setup
 What it does: When the user runs -setup (admin priv's only, maybe also another slash command) it will create channels and categories with the correct permissions. It will also create a base of set roles. 
 
 Note on setup: I would have the bot create the roles first then create channels and permissions with those roles. May save you from having to back track. IDK. 
 Must have permission: Admin
+
+Roles:
+Verified= send messages, view channels, add reactions, embed links, connect, voice activity
+Mods= All the above + kick, manage message
+Lead Mods= All the above + ban
+Core= Administrator
+
+
 
 
 What is it: Opensea sales
@@ -58,6 +78,11 @@ How it should work: Admin just needs to setup the sales channel and the bot shou
 Example: /opensea "sales channel" "0xABCDEFGH"
 
 Example GIT: https://github.com/0xEssential/opensea-discord-bot (not sure if it's up to date)
+
+
+
+
+
 
 
 
