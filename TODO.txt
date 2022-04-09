@@ -39,7 +39,7 @@ What is it: giveaway
 
 - DONE -
 
-Updates: Refresh giveaway embed, make embed look better (in #addon-ideas)
+Updates: Create option whether or not to include wallets in output
 
 
 
