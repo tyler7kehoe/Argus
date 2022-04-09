@@ -47,9 +47,9 @@ Updates: Refresh giveaway embed, make embed look better (in #addon-ideas)
 
 What is it: Webhook Deleter
 
-What it does: automatically deleting webhooks and banning the person who added it (this is a big one in the NFT space.) 
+- DONE -
 
-Must have permission: Automatic
+Updates: make it so the message is not deleted if sent by an admin? or people with certain permissions?
 
 
 
