@@ -30,6 +30,7 @@ class Moderation(commands.Cog):
             for item in data:
                 if item["guild_id"] == ctx.guild.id:
                     curr_blacklist = list(item["blacklist"])
+                    init_len = len(curr_blacklist)
                     i = 0
                     loopcount = len(curr_blacklist)
                     while i < loopcount:
@@ -39,19 +40,33 @@ class Moderation(commands.Cog):
                                 loopcount -= 1
                         i += 1
                     item["blacklist"] = curr_blacklist
-                    await ctx.respond(f'{terms} removed from blacklist.')
+                    if len(curr_blacklist) == init_len:
+                        ctx.respond('The words you entered were not found in the blacklist, removal failed.')
+                    elif (init_len-len(terms)) != len(curr_blacklist):
+                        ctx.respond('Not all terms were removed! Make sure you enter them correctly.')
+                    else:
+                        await ctx.respond(f'{terms} removed from blacklist.')
         with open("blacklist.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
 
-    # BAN: bot, verification, support
+    @commands.has_permissions(manage_webhooks=True)
+    @commands.slash_command(name="get_blacklist", description="Returns list of blacklisted terms that are not allowed"
+                                                              "to be in server members names")
+    async def retrieve_blacklist(self, ctx: Context):
+        ctx.resopnd(self.get_blacklist(ctx.guild.id))
+
     @commands.Cog.listener("on_member_update")
     async def nick_change(self, before, after):
-        if before.nick != after.nick and after.nick is not None:
+        if before.bot is True:
+            return
+        elif before.nick != after.nick and after.nick is not None:
             await self.check_for_invalid_terms(after)
 
     @commands.Cog.listener("on_member_join")
     async def invalid_name(self, member):
-        if member.display_name is not None:
+        if member.bot is True:
+            return
+        elif member.display_name is not None:
             await self.check_for_invalid_terms(member)
 
     async def check_for_invalid_terms(self, member):
@@ -61,7 +76,7 @@ class Moderation(commands.Cog):
             for i in range(len(split_name)):
                 if term in split_name[i].casefold() or term is member.display_name:
                     await self.send_log(member, term)
-                    await member.guild.ban(member, reason=f'Changed to nickname that contained {term}')
+                    await member.guild.ban(member, reason=f'Changed nickname to contain {term}')
 
     async def log_term(self, guild_id, blacklist, channel_to_log):
         with open("blacklist.json", "r", encoding="UTF-8") as _:
