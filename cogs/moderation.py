@@ -28,14 +28,18 @@ class Moderation(commands.Cog):
         with open("blacklist.json", "r") as _:
             data = json.load(_)
             for item in data:
-                if item["guild_id"] == str(ctx.guild.id):
+                if item["guild_id"] == ctx.guild.id:
                     curr_blacklist = list(item["blacklist"])
-                    for i in range(len(curr_blacklist)):
+                    i = 0
+                    loopcount = len(curr_blacklist)
+                    while i < loopcount:
                         for word in terms:
                             if curr_blacklist[i] == word:
                                 curr_blacklist.pop(i)
+                                loopcount -= 1
+                        i += 1
                     item["blacklist"] = curr_blacklist
-                    ctx.respond(f'Terms {terms} removed from blacklist.')
+                    await ctx.respond(f'{terms} removed from blacklist.')
         with open("blacklist.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
 
