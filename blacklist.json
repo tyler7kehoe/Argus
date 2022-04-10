@@ -1,0 +1,15 @@
+[
+    {
+        "guild_id": 958764142200754217,
+        "blacklist": [
+            "bot",
+            "verification",
+            "bad",
+            "words",
+            "3",
+            "4",
+            " d s"
+        ],
+        "channel_id": "958764310635614238"
+    }
+]
