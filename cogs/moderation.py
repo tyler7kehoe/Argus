@@ -5,7 +5,6 @@ from discord.ext.commands.context import Context
 from dotenv import load_dotenv
 from api import embed_builder
 
-
 load_dotenv()
 
 class Moderation(commands.Cog):
@@ -53,7 +52,8 @@ class Moderation(commands.Cog):
     @commands.slash_command(name="get_blacklist", description="Returns list of blacklisted terms that are not allowed"
                                                               "to be in server members names")
     async def retrieve_blacklist(self, ctx: Context):
-        ctx.resopnd(self.get_blacklist(ctx.guild.id))
+        blacklist = list(await self.get_blacklist(ctx.guild.id))
+        await ctx.respond(blacklist)
 
     @commands.Cog.listener("on_member_update")
     async def nick_change(self, before, after):
