@@ -53,6 +53,7 @@ What is it: Webhook Deleter
 - DONE -
 
 Updates: make it so the message is not deleted if sent by an admin? or people with certain permissions?
+         - Create an on/off switch for webhooks allowed
 
 
 
