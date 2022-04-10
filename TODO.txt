@@ -28,8 +28,11 @@ Tests: Load with over 10 roles - make sure embed looks good
 
 What is it: moderation
 
-What it does: When a mass amount of people join at once or a lot join with the same username it will auto ban (also known as anti spam. Beemo is a good example)
-Must have permission: automaticlly done by bot
+- DONE _
+
+Commands: /get_blacklist /add_to_blacklist /remove_from_blacklist
+
+Updates: raid protection, emoji spamming?
 
 
 
@@ -55,7 +58,7 @@ Updates: make it so the message is not deleted if sent by an admin? or people wi
 
 
 What is it: Setup
-What it does: When the user runs -setup (admin priv's only, maybe also another slash command) it will create channels and categories with the correct permissions. It will also create a base of set roles. 
+What it does: When the user runs /setup (admin priv's only) it will create channels and categories with the correct permissions. It will also create a base of set roles.
 
 Note on setup: I would have the bot create the roles first then create channels and permissions with those roles. May save you from having to back track. IDK. 
 Must have permission: Admin
