@@ -19,8 +19,7 @@ class giveaway(commands.Cog):
         self.bot: commands.Bot = bot
     # This command creates a giveaway, converts the time, waits until the time is up, and selects a winner.
     @commands.has_permissions(manage_webhooks=True)
-    @commands.slash_command(name="create_giveaway", description="Click reactions for reaction roles",
-                            guild_ids=[int(os.getenv("GUILD_ID"))])
+    @commands.slash_command(name="create_giveaway", description="Click reactions for reaction roles")
     async def gcreate(self, ctx: Context):           # TODO: continue porting over to slash -- change all to num_of_winners, create questions, .respond
 
         def check(m):
@@ -137,6 +136,8 @@ class giveaway(commands.Cog):
             tempWinner = random.choice(listUsers)
             winners.append(tempWinner)
             listUsers.remove(tempWinner)
+        for winner in winners:
+            await new_gaw_msg.remove_reaction('🎉', winner)
         # get winners discord IDs
         winnerIDs = list()
         for i in range(num_winners):
@@ -192,6 +193,32 @@ class giveaway(commands.Cog):
                     data.remove(item)
         with open("giveaways.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
+
+    @commands.has_permissions(manage_webhooks=True)
+    @commands.slash_command(name="reroll", description="Reroll a select # of giveaway winners. Call from giveaway channel")
+    async def reroll(self, ctx: Context, message_id, number_of_rerolls):
+        channel = ctx.channel
+        message = await channel.fetch_message(message_id)
+        await ctx.respond("Rerolling.....", ephemeral=True)
+        # get list of people who reacted to old giveaway
+        users = set()
+        for reaction in message.reactions:
+            async for user in reaction.users():
+                users.add(user)
+        listUsers = list(users)
+        listUsers.remove(message.author)
+
+        # Find the winners
+        winners = list()
+        for i in range(int(number_of_rerolls)):
+            tempWinner = random.choice(listUsers)
+            winners.append(tempWinner)
+            listUsers.remove(tempWinner)
+
+        reroll_output = "Rerolled winners:\n"
+        for winner in winners:
+            reroll_output += f"{winner.mention}\n"
+        await channel.send(reroll_output)
 
 
 
