@@ -42,7 +42,8 @@ What is it: giveaway
 
 - DONE -
 
-Updates: Create option whether or not to include wallets in output
+Updates: /reroll - cache people that entered into giveaway and didn't win. If reroll is called, randomly select from that list. 
+         To save space, it would be best to clear entrants once a day from the database. 
 
 
 
@@ -87,7 +88,9 @@ Example GIT: https://github.com/0xEssential/opensea-discord-bot (not sure if it'
 
 
 
+What is it: Polls
 
+Implemenation idea: Like a giveaway but with reactions. Must be reactivated like a giveaway is if the bot restarts. The rest should be pretty streamlined.
 
 
 Possibilites if there is time:
@@ -95,7 +98,8 @@ Possibilites if there is time:
 Notifications from twitch, twitter, etc
 Maybe a leveling system
 Add little fun games tiktaktoe, RPS, Connect 4, etc.
-Polls
+
+
 
 
 
