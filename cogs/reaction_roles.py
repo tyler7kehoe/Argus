@@ -45,7 +45,7 @@ class reaction_roles(commands.Cog):
         except asyncio.TimeoutError:
             await ctx.respond('You took too long to respond to the message (Timeout after 4 minutes.)')
         except ValueError:
-            await ctx.repond('There was likely an input error. Please try again')
+            await ctx.respond('There was likely an input error. Please try again')
 
         chID_stripped = chID_msg.content[2:]
         chID_stripped = chID_stripped[:-1]
