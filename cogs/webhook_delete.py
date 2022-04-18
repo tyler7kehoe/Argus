@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+from api import embed_builder
+
 
 load_dotenv()
 
@@ -13,7 +15,7 @@ class WebhookDelete(commands.Cog):
     async def del_webhook(self, message):
         if message.webhook_id is None:
             return
-        elif message.type is discord.MessageType.application_command:
+        elif message.type is discord.MessageType.application_command or message.author == self.bot.user:
             return
         else:
             wh = await self.bot.fetch_webhook(message.webhook_id)
@@ -34,6 +36,12 @@ class WebhookDelete(commands.Cog):
                                     for channel in member.guild.channels:
                                         await channel.set_permissions(member, send_messages=False, view_channel=False,
                                                                       view_guild_insights=False)
+                                    em = embed_builder.embed_builder('Webhook Detected!',
+                                                                f'{member.name} created and sent a webhook!',
+                                                                embed_builder.embed_color.FAILURE,
+                                                                footer='Check audit logs for more info')
+
+
 
 
 
