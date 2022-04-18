@@ -96,13 +96,25 @@ class giveaway(commands.Cog):
                 "prize": prize,
                 "terminated": False,
                 "host_channel": ch.id,
-                "winners_channel": chWIN.id
+                "winners_channel": chWIN.id,
             }
 
             if new_set not in data:
                 data.append(new_set)
 
         with open("giveaways.json", "w") as _:
+            json.dump(obj=data, fp=_, indent=4)
+        with open("gaw_log.json", "r") as _:
+            data = json.load(_)
+
+            new_set = {
+                "giveaway_id": message_id,
+                "losers": " "
+            }
+
+            if new_set not in data:
+                data.append(new_set)
+        with open("gaw_log.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
 
     async def check_for_active_giveaways(self, ctx: Context):
@@ -136,6 +148,18 @@ class giveaway(commands.Cog):
             tempWinner = random.choice(listUsers)
             winners.append(tempWinner)
             listUsers.remove(tempWinner)
+        # write people who didn't win to JSON
+        losers = list()
+        for i in listUsers:
+            losers.append(i.id)
+        with open("gaw_log.json", "r") as _:
+            data = json.load(_)
+            for item in data:
+                if item["giveaway_id"] == message_id:
+                    item["losers"] = losers
+        with open("gaw_log.json", "w") as _:
+            json.dump(obj=data, fp=_, indent=4)
+
         for winner in winners:
             await new_gaw_msg.remove_reaction('🎉', winner)
         # get winners discord IDs
@@ -185,6 +209,10 @@ class giveaway(commands.Cog):
         update_embed = discord.Embed(title=f':gift: {end_prize} Giveaway Winners :gift:', description=f'{winnerOutputNoWallet}')
         update_embed.add_field(name='Giveaway ended:', value=f'<t:{int(datetime.timestamp(datetime.now()))}:R>')
         await new_gaw_msg.edit(embed=update_embed)
+
+        await self.remove_from_json(message_id)
+
+    async def remove_from_json(self, message_id):
         with open("giveaways.json", "r") as _:
             data = json.load(_)
             for item in data:
@@ -194,30 +222,34 @@ class giveaway(commands.Cog):
         with open("giveaways.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
 
+
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="reroll", description="Reroll a select # of giveaway winners. Call from giveaway channel")
     async def reroll(self, ctx: Context, message_id, number_of_rerolls):
         channel = ctx.channel
-        message = await channel.fetch_message(message_id)
+        guild = ctx.guild
         await ctx.respond("Rerolling.....", ephemeral=True)
         # get list of people who reacted to old giveaway
-        users = set()
-        for reaction in message.reactions:
-            async for user in reaction.users():
-                users.add(user)
-        listUsers = list(users)
-        listUsers.remove(message.author)
+        entrants = list()
+        with open("gaw_log.json", "r") as _:
+            data = json.load(_)
+            for item in data:
+                if item["giveaway_id"] == int(message_id):
+                    entrants = item["losers"]
+        with open("gaw_log.json", "w") as _:
+            json.dump(obj=data, fp=_, indent=4)
 
         # Find the winners
         winners = list()
-        for i in range(int(number_of_rerolls)):
-            tempWinner = random.choice(listUsers)
+        for i in range(len(number_of_rerolls)):
+            tempWinner = random.choice(entrants)
             winners.append(tempWinner)
-            listUsers.remove(tempWinner)
+            entrants.remove(tempWinner)
 
         reroll_output = "Rerolled winners:\n"
         for winner in winners:
-            reroll_output += f"{winner.mention}\n"
+            new_win = await guild.fetch_member(winner)
+            reroll_output += f"{new_win.mention}\n"
         await channel.send(reroll_output)
 
 
