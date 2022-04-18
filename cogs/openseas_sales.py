@@ -2,10 +2,7 @@ import discord
 import os
 from discord.ext import commands
 from discord.ext.commands.context import Context
-from dotenv import load_dotenv
 import requests
-
-load_dotenv()
 
 
 class openseas_sales(commands.Cog):

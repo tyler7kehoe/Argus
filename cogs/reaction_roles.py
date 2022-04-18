@@ -2,10 +2,7 @@ import asyncio
 import discord
 from discord.ext import commands
 from discord.ext.commands.context import Context
-from dotenv import load_dotenv
 import json
-
-load_dotenv()
 
 
 class reaction_roles(commands.Cog):

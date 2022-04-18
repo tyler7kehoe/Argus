@@ -1,17 +1,13 @@
 import time
 from datetime import datetime, timedelta
-from time import time as T
 import discord
 from discord.ext import commands
 from discord.ext.commands.context import Context
 import asyncio
 import random
 import textwrap
-import os
-from dotenv import load_dotenv
 from api.data_handler import *
 
-load_dotenv()
 
 
 class giveaway(commands.Cog):

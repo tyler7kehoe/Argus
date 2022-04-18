@@ -1,10 +1,6 @@
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
 from api import embed_builder
-
-
-load_dotenv()
 
 
 class WebhookDelete(commands.Cog):

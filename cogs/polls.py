@@ -2,11 +2,7 @@ import asyncio
 import discord
 from discord.ext import commands
 from discord.ext.commands.context import Context
-from dotenv import load_dotenv
-import time
 from datetime import datetime, timedelta
-
-load_dotenv()
 
 
 class Polls(commands.Cog):
@@ -81,9 +77,9 @@ class Polls(commands.Cog):
             await poll_msg.add_reaction(emojis[i])
 
         await asyncio.sleep(intTime)
-        await self.end_poll(poll_msg)
+        await self.end_poll(poll_msg, ch)
 
-    async def end_poll(self, message):
+    async def end_poll(self, message, channel):
         pass
 
 def setup(bot):
