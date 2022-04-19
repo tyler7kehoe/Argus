@@ -1,8 +1,12 @@
+import json
 import discord
 import os
 from discord.ext import commands
 from discord.ext.commands.context import Context
-import requests
+from opensea import OpenseaAPI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class openseas_sales(commands.Cog):
@@ -12,28 +16,32 @@ class openseas_sales(commands.Cog):
 
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="opensea",
-                            description="Automatically post opensea sales in an embed",
-                            guild_ids=[int(os.getenv("GUILD_ID"))])
-    async def opensea(self, ctx: Context, channel, contract_address):
-        def check(m):
-            return m.content and m.channel == ctx.channel
-        
-        print("TESTTESTEST")
-        if channel == None or contract_address == None:
-            return await ctx.send('Usage: gcreate {channel name} {contract address}')
+                            description="Automatically post opensea sales in an embed")
+    async def opensea(self, ctx: Context, channel, contract_address, token_id):
+
         ch = self.bot.get_channel(int(channel[2:-1]))
-        await ctx.respond(ch)
-        await ctx.respond(contract_address)
 
-        params = "asset_contract_address=" + contract_address
+        api = OpenseaAPI(apikey=os.getenv("OPENSEA_KEY"))
 
-        url = "https://api.opensea.io/api/v1/events?" + params
+        result = api.asset(contract_address, token_id)
+        with open("opensea.json", "r") as _:
+            data = json.load(_)
+            data.append(result)
+        with open("opensea.json", "w") as _:
+            json.dump(obj=data, fp=_, indent=4)
+        with open("opensea.json", "r") as _:
+            data = json.load(_)
+            embed = discord.Embed(title=f"{result['asset_contract']['name']}", color=discord.Color.blue(), description=f'{result["name"]}')
+            embed.add_field(name='Seller:', value=f'[{result["asset_contract"]["address"][:-35]}](https://etherscan.io/address/{result["asset_contract"]["payout_address"]})')
+            embed.add_field(name='Buyer:', value=f'[{result["asset_contract"]["address"][:-35]}](https://etherscan.io/address/{result["asset_contract"]["address"]})')                              # make sure buy/sell is in the right order
 
-        headers = {"Accept": "application/json"}
+            try:
+                embed.set_image(url=result['large_image_url'])
+            except KeyError:
+                embed.set_image(url=result['image_url'])
 
-        response = requests.request("GET", url, headers=headers)
-
-        print(response.text)
+        await ch.send(embed=embed)
+        await ctx.respond('Contract sent to designated text-channel')
 
 
 def setup(bot):
