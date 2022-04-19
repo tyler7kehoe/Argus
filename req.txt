@@ -1,4 +1,4 @@
-You need py-cprd (pip install py-cord==2.0.0b4)
+You need py-cprd (pip install py-cord==2.0.0b4) and (pip install opensea-api)
 
 Bot 1 Token: OTU4NzY1NDAzODA5NjY1MDI1.YkSF3Q.S9IqHnCpVX8JbQnQTP4Ft8s6TV0
 Bot 2 Token: OTU5NTIwOTI3NTQzMDgzMDQ4.YkdFgA.mM_prBGm4yS4kg0dmsTGD9WCYEE
