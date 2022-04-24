@@ -44,4 +44,5 @@ async def on_member_join(member):
             await channel.edit(name=f'Members | {member.guild.member_count}')
             break
 
+
 bot.run(os.getenv("TOKEN"))

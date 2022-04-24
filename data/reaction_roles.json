@@ -1,0 +1,90 @@
+[
+    {
+        "message_id": 960255172003655770,
+        "host_channel": 958764310635614238,
+        "roles": [
+            "role1",
+            "role2",
+            "role3"
+        ],
+        "emojis": [
+            "\ud83e\udd14",
+            "\ud83d\udc4d",
+            "\ud83d\ude02"
+        ]
+    },
+    {
+        "message_id": 960317743058530324,
+        "host_channel": 958764310635614238,
+        "roles": [
+            "role1",
+            "role2",
+            "role3",
+            "role4"
+        ],
+        "emojis": [
+            "\ud83e\udd14",
+            "\ud83d\udc4d",
+            "\ud83d\ude02",
+            "\ud83d\ude2e"
+        ]
+    },
+    {
+        "message_id": 960322590939951174,
+        "host_channel": 958764310635614238,
+        "roles": [
+            "role2"
+        ],
+        "emojis": [
+            "\ud83e\udd14"
+        ]
+    },
+    {
+        "message_id": 965671491238780968,
+        "host_channel": 958764310635614238,
+        "roles": [
+            "role1"
+        ],
+        "emojis": [
+            "\ud83d\udc4d"
+        ]
+    },
+    {
+        "message_id": 965671930365612042,
+        "host_channel": 958764310635614238,
+        "roles": [
+            "role1",
+            "role1",
+            "role1",
+            "role1",
+            "role1",
+            "role1",
+            "role1",
+            "role1",
+            "role1",
+            "role1"
+        ],
+        "emojis": [
+            "1\ufe0f\u20e3",
+            "2\ufe0f\u20e3",
+            "3\ufe0f\u20e3",
+            "4\ufe0f\u20e3",
+            "5\ufe0f\u20e3",
+            "6\ufe0f\u20e3",
+            "7\ufe0f\u20e3",
+            "8\ufe0f\u20e3",
+            "9\ufe0f\u20e3",
+            "\ud83d\udd1f"
+        ]
+    },
+    {
+        "message_id": 965747424771575849,
+        "host_channel": 958764310635614238,
+        "roles": [
+            "role1"
+        ],
+        "emojis": [
+            "\ud83d\udc4d"
+        ]
+    }
+]

@@ -82,7 +82,7 @@ class giveaway(commands.Cog):
         await self.end_gaw(gaw_msg.id, numOfWinners, prize, ch, chWIN)
 
     def send_to_file(self, message_id, end_time, num_winners, prize, ch, chWIN):
-        with open("giveaways.json", "r") as _:
+        with open("data/giveaways.json", "r") as _:
             data = json.load(_)
 
             new_set = {
@@ -98,9 +98,9 @@ class giveaway(commands.Cog):
             if new_set not in data:
                 data.append(new_set)
 
-        with open("giveaways.json", "w") as _:
+        with open("data/giveaways.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
-        with open("gaw_log.json", "r") as _:
+        with open("data/gaw_log.json", "r") as _:
             data = json.load(_)
 
             new_set = {
@@ -115,7 +115,7 @@ class giveaway(commands.Cog):
 
     async def check_for_active_giveaways(self, ctx: Context):
         # if giveaway time has not happened yet, reactivate.
-        with open("giveaways.json", "r") as _:
+        with open("data/giveaways.json", "r") as _:
             data = json.load(_)
             await asyncio.gather(*(self.reactivate_giveaway(item['giveaway_id'], item['end_time'],
                                                             item['num_winners'], item['prize'], item["host_channel"], item["winners_channel"]) for item in data))
@@ -148,12 +148,12 @@ class giveaway(commands.Cog):
         losers = list()
         for i in listUsers:
             losers.append(i.id)
-        with open("gaw_log.json", "r") as _:
+        with open("data/gaw_log.json", "r") as _:
             data = json.load(_)
             for item in data:
                 if item["giveaway_id"] == message_id:
                     item["losers"] = losers
-        with open("gaw_log.json", "w") as _:
+        with open("data/gaw_log.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
 
         for winner in winners:
@@ -209,13 +209,13 @@ class giveaway(commands.Cog):
         await self.remove_from_json(message_id)
 
     async def remove_from_json(self, message_id):
-        with open("giveaways.json", "r") as _:
+        with open("data/giveaways.json", "r") as _:
             data = json.load(_)
             for item in data:
                 if item["giveaway_id"] == message_id:
                     item["terminated"] = True
                     data.remove(item)
-        with open("giveaways.json", "w") as _:
+        with open("data/giveaways.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
 
 
@@ -227,12 +227,12 @@ class giveaway(commands.Cog):
         await ctx.respond("Rerolling.....", ephemeral=True)
         # get list of people who reacted to old giveaway
         entrants = list()
-        with open("gaw_log.json", "r") as _:
+        with open("data/gaw_log.json", "r") as _:
             data = json.load(_)
             for item in data:
                 if item["giveaway_id"] == int(message_id):
                     entrants = item["losers"]
-        with open("gaw_log.json", "w") as _:
+        with open("data/gaw_log.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
 
         # Find the winners

@@ -3,11 +3,7 @@
         "guild_id": 958764142200754217,
         "blacklist": [
             "bot",
-            "verification",
-            "bad",
-            "3",
-            "4",
-            " d s"
+            "verification"
         ],
         "channel_id": "958764310635614238"
     }

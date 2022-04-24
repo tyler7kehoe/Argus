@@ -68,7 +68,7 @@ class reaction_roles(commands.Cog):
         guild = await self.bot.fetch_guild(payload.guild_id)
         member = await guild.fetch_member(payload.user_id)
         emoji = str(payload.emoji.id) if payload.emoji.is_custom_emoji() else payload.emoji.name
-        with open("reaction_roles.json", "r", encoding="UTF-8") as _:
+        with open("data/reaction_roles.json", "r", encoding="UTF-8") as _:
             data = json.load(_)
             for item in data:
                 if item["message_id"] == message.id:
@@ -89,7 +89,7 @@ class reaction_roles(commands.Cog):
         obj = None
         message = await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
         emoji = str(payload.emoji.id) if payload.emoji.is_custom_emoji() else payload.emoji.name
-        with open("reaction_roles.json", "r", encoding="UTF-8") as _:
+        with open("data/reaction_roles.json", "r", encoding="UTF-8") as _:
             data = json.load(_)
             for item in data:
                 if item["message_id"] == message.id:
@@ -110,7 +110,7 @@ class reaction_roles(commands.Cog):
             await payload.member.add_roles(role)
 
     async def log_msg(self, message_id, ch_id, roles, emojis):
-        with open("reaction_roles.json", "r", encoding="UTF-8") as _:
+        with open("data/reaction_roles.json", "r", encoding="UTF-8") as _:
             data = json.load(_)
 
             new_set = {
@@ -123,7 +123,7 @@ class reaction_roles(commands.Cog):
             if new_set not in data:
                 data.append(new_set)
 
-        with open("reaction_roles.json", "w", encoding="UTF-8") as _:
+        with open("data/reaction_roles.json", "w", encoding="UTF-8") as _:
             json.dump(obj=data, fp=_, indent=4)
 
 

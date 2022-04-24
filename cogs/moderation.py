@@ -24,7 +24,7 @@ class Moderation(commands.Cog):
     @commands.slash_command(name="remove_from_blacklist", description="Separate words by comma, no spaces")
     async def remove_from_blacklist(self, ctx: Context, terms):
         terms = str(terms).split(',')
-        with open("blacklist.json", "r") as _:
+        with open("data/blacklist.json", "r") as _:
             data = json.load(_)
             for item in data:
                 if item["guild_id"] == ctx.guild.id:
@@ -45,7 +45,7 @@ class Moderation(commands.Cog):
                         ctx.respond('Not all terms were removed! Make sure you enter them correctly.')
                     else:
                         await ctx.respond(f'{terms} removed from blacklist.')
-        with open("blacklist.json", "w") as _:
+        with open("data/blacklist.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
 
     @commands.has_permissions(manage_webhooks=True)
@@ -79,7 +79,7 @@ class Moderation(commands.Cog):
                     await member.guild.ban(member, reason=f'Changed nickname to contain {term}')
 
     async def log_term(self, guild_id, blacklist, channel_to_log):
-        with open("blacklist.json", "r", encoding="UTF-8") as _:
+        with open("data/blacklist.json", "r", encoding="UTF-8") as _:
             data = json.load(_)
             found = False
             new_set = {
@@ -97,11 +97,11 @@ class Moderation(commands.Cog):
             if new_set not in data and not found:
                 data.append(new_set)
 
-        with open("blacklist.json", "w", encoding="UTF-8") as _:
+        with open("data/blacklist.json", "w", encoding="UTF-8") as _:
             json.dump(obj=data, fp=_, indent=4)
 
     async def get_blacklist(self, guild_id):
-        with open("blacklist.json", "r") as _:
+        with open("data/blacklist.json", "r") as _:
             data = json.load(_)
 
             for set in data:
@@ -109,7 +109,7 @@ class Moderation(commands.Cog):
                     return set['blacklist']
 
     async def get_chid(self, guild_id):
-        with open("blacklist.json", "r") as _:
+        with open("data/blacklist.json", "r") as _:
             data = json.load(_)
 
             for set in data:
