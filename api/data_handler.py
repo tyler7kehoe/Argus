@@ -2,7 +2,7 @@ import json
 
 
 async def get_input(user_id) -> str:
-    with open("data.json", "r") as _:
+    with open("data/data.json", "r") as _:
         data = json.load(_)
 
         for set in data:
@@ -12,7 +12,7 @@ async def get_input(user_id) -> str:
     return None
 
 async def set_input(user_id, new_content):
-    with open("data.json", "r") as _:
+    with open("data/data.json", "r") as _:
         data = json.load(_)
 
         new_set = {
@@ -27,5 +27,5 @@ async def set_input(user_id, new_content):
         if new_set not in data:
             data.append(new_set)
 
-    with open("data.json", "w") as _:
+    with open("data/data.json", "w") as _:
         json.dump(obj=data, fp=_, indent=4)
