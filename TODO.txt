@@ -60,10 +60,10 @@ Updates: make it so the message is not deleted if sent by an admin? or people wi
 
 
 What is it: Setup
-What it does: When the user runs /setup (admin priv's only) it will create channels and categories with the correct permissions. It will also create a base of set roles.
 
-Note on setup: I would have the bot create the roles first then create channels and permissions with those roles. May save you from having to back track. IDK. 
-Must have permission: Admin
+  - DONE -
+
+Note: Announcements channel is blocked by a paywall (user must set manually)
 
 Roles:
 Verified= send messages, view channels, add reactions, embed links, connect, voice activity
