@@ -7,7 +7,7 @@ from asyncio import sleep
 from dotenv import load_dotenv
 
 from cogs.giveaway import giveaway
-from cogs.openseas_sales import TaskHandler
+# from cogs.openseas_sales import TaskHandler
 
 load_dotenv()
 intents = discord.Intents.default()
