@@ -1,6 +1,196 @@
+# from asyncio import sleep
+# from cgi import print_exception
+# import datetime
+# import json
+# import os
+# from traceback import print_exc
+# import discord
+# from discord.ext import commands, tasks
+# from discord.ext.commands.context import Context
+# from dotenv import load_dotenv
+# import requests
+
+# load_dotenv()
+ 
+# # TODO test with larger time frames
+# # maybe add a time field in the JSON (rather than last accessed) to ensure no time is missed
+
+# #create another for to go through contracts
+# # add sleep call
+
+# class Opensea_task(commands.Cog):
+#     def __init__(self, bot):
+#         self.bot = commands.Bot = bot
+#         self._tasks = [] # Empty list, holds all the loops. You can also use a dict if you want to differentiate the tasks somehow
+
+#     async def static_loop(self):
+#         # This is the function that will be 'looping'
+#         print("checking for new opensea sales...")
+#         # time = prevtime
+#         # time_delta = datetime.datetime.utcnow() - prevtime
+#         with open("data/opensea.json", "r", encoding="UTF-8") as _:
+#             data = json.load(_)
+#         # for task in data:
+#         for guild in data:
+#             print("prev: " + str(self.prevtime))
+#             print("now: " + str(datetime.datetime.utcnow()))
+#             time_delta = datetime.datetime.utcnow() - self.prevtime
+#             print("delta: " + str(time_delta))
+#             print()
+
+#             # chid = task['channel_id']
+#             gu_id = guild['guild_id']
+#             # ch = self.bot.get_channel(chid)
+#             guild_obj = self.bot.get_guild(gu_id)
+#             contracts = guild['contracts']
+#             for contract in contracts:
+#                 chid = contract['channel_id']
+#                 ch = guild_obj.get_channel(chid)
+#                 contract_address = contract['contract_address']
+
+#                 params = {
+#                 "only_opensea": 'true',            
+#                 'asset_contract_address': contract_address,
+#                 "event_type": 'successful',
+#                 # "occurred_after": datetime.datetime.utcnow() - datetime.timedelta(seconds=5),
+#                 # "occurred_after": datetime.datetime.utcnow() - datetime.timedelta(minutes=5),
+#                 "occurred_after": datetime.datetime.utcnow() - time_delta,
+#                 }
+#                 # print(datetime.datetime.utcnow())
+#                 addr = requests.get("https://api.opensea.io/api/v1/events?event_type=successful", params=params, headers=self.headers)
+#                 addr = addr.json()
+#                 addr = addr['asset_events']
+#                 print(addr)
+#                 await ch.send("test")
+
+
+#                 for i in range(len(addr)):
+#                     title = contract[i]['asset']['name']
+#                     description = contract[i]['asset']['asset_contract']["name"]
+#                     img = contract[i]['asset']['image_url']
+#                     from_acc = contract[i]['transaction']['from_account']['address']
+#                     to_acc = contract[i]['winner_account']['address']
+
+#                     embed = discord.Embed(title=f"{title}", color=discord.Color.blue(),
+#                                     description=f'{description}')
+#                     embed.add_field(name='Seller:', value=f'[{from_acc[:-35]}](https://etherscan.io/address/{from_acc})')
+#                     embed.add_field(name='Buyer:', value=f'[{to_acc[:-35]}](https://etherscan.io/address/{to_acc})')     # trouble reaching buyer location with indexing.
+#                     embed.timestamp = datetime.datetime.now()
+
+#                     embed.set_image(url=img)
+#                     # await ch.send(embed=embed)
+#         print()
+#         print()
+#         self.prevtime = datetime.datetime.utcnow()
+        
+#     async def before_task(self) :
+#         await self.bot.wait_until_ready()
+
+#     def task_launcher(self): # The `args` are the arguments passed into the loop
+#         """Creates new instances of `tasks.Loop`"""
+#         # Creating the task
+#         new_task = tasks.loop(seconds=15)(self.static_loop) # You can also pass a static interval and/or count
+#         new_task.before_loop(self.before_task())
+
+#         # Starting the task
+#         new_task.start(args)
+#         self._tasks.append(new_task)
+
+   
+
+#     # @commands.command()
+#     # async def start_task(self, ctx, *args):
+#     #     """Command that launches a new task with the arguments given"""
+#     #     self.task_launcher(*args, seconds=1)
+#     #     await ctx.send('Task started!')
+    
+#     # def __init__(self, bot):
+#     #     self.bot: commands.Bot = bot
+#     #     self.printer.start()
+        
+
+#     # def cog_unload(self):
+#     #     self.printer.cancel()
+
+
+
+#     # @tasks.loop(seconds=15.0)
+#     # async def printer(self):
+#         # print("checking for new opensea sales...")
+#         # # time = prevtime
+#         # # time_delta = datetime.datetime.utcnow() - prevtime
+#         # with open("data/opensea.json", "r", encoding="UTF-8") as _:
+#         #     data = json.load(_)
+#         # # for task in data:
+#         # for guild in data:
+#         #     print("prev: " + str(self.prevtime))
+#         #     print("now: " + str(datetime.datetime.utcnow()))
+#         #     time_delta = datetime.datetime.utcnow() - self.prevtime
+#         #     print("delta: " + str(time_delta))
+#         #     print()
+
+#         #     # chid = task['channel_id']
+#         #     gu_id = guild['guild_id']
+#         #     # ch = self.bot.get_channel(chid)
+#         #     guild_obj = self.bot.get_guild(gu_id)
+#         #     contracts = guild['contracts']
+#         #     for contract in contracts:
+#         #         chid = contract['channel_id']
+#         #         ch = guild_obj.get_channel(chid)
+#         #         contract_address = contract['contract_address']
+
+#         #         params = {
+#         #         "only_opensea": 'true',            
+#         #         'asset_contract_address': contract_address,
+#         #         "event_type": 'successful',
+#         #         # "occurred_after": datetime.datetime.utcnow() - datetime.timedelta(seconds=5),
+#         #         # "occurred_after": datetime.datetime.utcnow() - datetime.timedelta(minutes=5),
+#         #         "occurred_after": datetime.datetime.utcnow() - time_delta,
+#         #         }
+#         #         # print(datetime.datetime.utcnow())
+#         #         addr = requests.get("https://api.opensea.io/api/v1/events?event_type=successful", params=params, headers=self.headers)
+#         #         addr = addr.json()
+#         #         addr = addr['asset_events']
+#         #         print(addr)
+#         #         await ch.send("test")
+
+
+#         #         for i in range(len(addr)):
+#         #             title = contract[i]['asset']['name']
+#         #             description = contract[i]['asset']['asset_contract']["name"]
+#         #             img = contract[i]['asset']['image_url']
+#         #             from_acc = contract[i]['transaction']['from_account']['address']
+#         #             to_acc = contract[i]['winner_account']['address']
+
+#         #             embed = discord.Embed(title=f"{title}", color=discord.Color.blue(),
+#         #                             description=f'{description}')
+#         #             embed.add_field(name='Seller:', value=f'[{from_acc[:-35]}](https://etherscan.io/address/{from_acc})')
+#         #             embed.add_field(name='Buyer:', value=f'[{to_acc[:-35]}](https://etherscan.io/address/{to_acc})')     # trouble reaching buyer location with indexing.
+#         #             embed.timestamp = datetime.datetime.now()
+
+#         #             embed.set_image(url=img)
+#         #             # await ch.send(embed=embed)
+#         # print()
+#         # print()
+#         # self.prevtime = datetime.datetime.utcnow()
+
+#     # @printer.before_loop
+#     # async def before_printer(self):
+#     #     self.prevtime = datetime.datetime.utcnow()
+#     #     try:
+#     #         await self.bot.wait_until_ready()
+#     #     except:
+#     #         print("mee")
+
+
+# def setup(bot):
+#     bot.add_cog(Opensea_task(bot))
+from asyncio import sleep
+from cgi import print_exception
 import datetime
 import json
 import os
+from traceback import print_exc
 import discord
 from discord.ext import commands, tasks
 from discord.ext.commands.context import Context
@@ -9,10 +199,15 @@ import requests
 
 load_dotenv()
  
-# TODO test with larger time frames
 # maybe add a time field in the JSON (rather than last accessed) to ensure no time is missed
 
+
 class Opensea_task(commands.Cog):
+    headers = {
+            "Accept": "application/json",
+            "X-API-KEY": os.getenv("OPENSEA_KEY")
+        }
+    
     def __init__(self, bot):
         self.bot: commands.Bot = bot
         self.printer.start()
@@ -21,10 +216,6 @@ class Opensea_task(commands.Cog):
     def cog_unload(self):
         self.printer.cancel()
 
-    headers = {
-                "Accept": "application/json",
-                "X-API-KEY": os.getenv("OPENSEA_KEY")
-            }
 
 
     @tasks.loop(seconds=15.0)
@@ -34,47 +225,53 @@ class Opensea_task(commands.Cog):
         # time_delta = datetime.datetime.utcnow() - prevtime
         with open("data/opensea.json", "r", encoding="UTF-8") as _:
             data = json.load(_)
-
-        for task in data:
+        # for task in data:
+        for guild in data:
             print("prev: " + str(self.prevtime))
             print("now: " + str(datetime.datetime.utcnow()))
             time_delta = datetime.datetime.utcnow() - self.prevtime
             print("delta: " + str(time_delta))
             print()
 
-            chid = task['channel_id']
-            ch = self.bot.get_channel(chid)
-            contract_address = task['contract_address']
+            # chid = task['channel_id']
+            gu_id = guild['guild_id']
+            # ch = self.bot.get_channel(chid)
+            guild_obj = self.bot.get_guild(gu_id)
+            contracts = guild['contracts']
+            for contract in contracts:
+                chid = contract['channel_id']
+                ch = guild_obj.get_channel(chid)
+                contract_address = contract['contract_address']
 
-            params = {
-            "only_opensea": 'true',            
-            'asset_contract_address': contract_address,
-            "event_type": 'successful',
-            # "occurred_after": datetime.datetime.utcnow() - datetime.timedelta(seconds=5),
-            # "occurred_after": datetime.datetime.utcnow() - datetime.timedelta(minutes=5),
-            "occurred_after": datetime.datetime.utcnow() - time_delta,
-            }
-            # print(datetime.datetime.utcnow())
-            contract = requests.get("https://api.opensea.io/api/v1/events?event_type=successful", params=params, headers=self.headers)
-            contract = contract.json()
-            contract = contract['asset_events']
-            print(contract)
+                params = {
+                "only_opensea": 'true',            
+                'asset_contract_address': contract_address,
+                "event_type": 'successful',
+                # "occurred_after": datetime.datetime.utcnow() - datetime.timedelta(seconds=5),
+                "occurred_after": datetime.datetime(2022, 4, 28, 1,00,00)
+                # "occurred_after": datetime.datetime.utcnow() - time_delta,
+                }
+                # print(datetime.datetime.utcnow())
+                await sleep(1)
+                addr = requests.get("https://api.opensea.io/api/v1/events?event_type=successful", params=params, headers=self.headers)
+                addr = addr.json()
+                addr = addr['asset_events']
 
-            for i in range(len(contract)):
-                title = contract[i]['asset']['name']
-                description = contract[i]['asset']['asset_contract']["name"]
-                img = contract[i]['asset']['image_url']
-                from_acc = contract[i]['transaction']['from_account']['address']
-                to_acc = contract[i]['winner_account']['address']
+                for i in range(len(addr)):
+                    title = addr[i]['asset']['name']
+                    description = addr[i]['asset']['asset_contract']["name"]
+                    img = addr[i]['asset']['image_url']
+                    from_acc = addr[i]['transaction']['from_account']['address']
+                    to_acc = addr[i]['winner_account']['address']
 
-                embed = discord.Embed(title=f"{title}", color=discord.Color.blue(),
-                                description=f'{description}')
-                embed.add_field(name='Seller:', value=f'[{from_acc[:-35]}](https://etherscan.io/address/{from_acc})')
-                embed.add_field(name='Buyer:', value=f'[{to_acc[:-35]}](https://etherscan.io/address/{to_acc})')     # trouble reaching buyer location with indexing.
-                embed.timestamp = datetime.datetime.now()
+                    embed = discord.Embed(title=f"{title}", color=discord.Color.blue(),
+                                    description=f'{description}')
+                    embed.add_field(name='Seller:', value=f'[{from_acc[:-35]}](https://etherscan.io/address/{from_acc})')
+                    embed.add_field(name='Buyer:', value=f'[{to_acc[:-35]}](https://etherscan.io/address/{to_acc})')     # trouble reaching buyer location with indexing.
+                    embed.timestamp = datetime.datetime.now()
 
-                embed.set_image(url=img)
-                await ch.send(embed=embed)
+                    embed.set_image(url=img)
+                    await ch.send(embed=embed)
         print()
         print()
         self.prevtime = datetime.datetime.utcnow()
@@ -82,7 +279,11 @@ class Opensea_task(commands.Cog):
     @printer.before_loop
     async def before_printer(self):
         self.prevtime = datetime.datetime.utcnow()
-        await self.bot.wait_until_ready()
+        try:
+            await self.bot.wait_until_ready()
+        except:
+            print("mee")
+
 
 def setup(bot):
     bot.add_cog(Opensea_task(bot))

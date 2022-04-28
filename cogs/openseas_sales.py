@@ -36,7 +36,7 @@ class Openseas_Sales(commands.Cog):
         #     return
 
         ch = self.bot.get_channel(int(channel[2:-1]))
-        # guild_id = ctx.guild.id
+        guild_id = ctx.guild.id
         # headers = {
         #     "Accept": "application/json",
         #     "X-API-KEY": os.getenv("OPENSEA_KEY")
@@ -57,7 +57,7 @@ class Openseas_Sales(commands.Cog):
         # contract = contract['asset_events']
         # log the new contract per guild specific
         # self.log_contract_tracker(guild_id, ch.id, contract_address, last_transaction=contract[0]['transaction']['transaction_hash'])
-        if(self.log_contract_tracker(ch.id, contract_address)):
+        if(self.log_contract_tracker(guild_id, ch.id, contract_address)):
             await ctx.respond('Most recent transaction sent to designated text-channel\n'
                           'Transactions from this contract will now be tracked.')
         else:
@@ -109,18 +109,32 @@ class Openseas_Sales(commands.Cog):
     #     with open("data/opensea.json", "w", encoding="UTF-8") as _:
     #         json.dump(obj=data, fp=_, indent=4)
 
-    def log_contract_tracker(self, channel_id, contract_address):
+    def log_contract_tracker(self, guild_id, channel_id, contract_address):
         with open("data/opensea.json", "r", encoding="UTF-8") as _:
             data = json.load(_)
-            new_set = {
-                'channel_id': channel_id,
-                'contract_address': contract_address,
-            }
-            if new_set not in data:
-                data.append(new_set)
-                newdata = True
-            else:
-                newdata = False
+            if guild_id not in data:
+                data.append({'guild_id': guild_id, 'contracts': []})
+            for i in range(len(data)):
+                if data[i]['guild_id'] == guild_id:
+                    new_set = {
+                        'channel_id': channel_id,
+                        'contract_address': contract_address,
+                            }
+                    if new_set in data[i]['contracts']:
+                        newdata = False
+                    else:
+                        data[i]['contracts'].append(new_set)
+                        newdata = True
+                    break
+            # new_set = {
+            #     'channel_id': channel_id,
+            #     'contract_address': contract_address,
+            # }
+            # if new_set not in data:
+            #     data.append(new_set)
+            #     newdata = True
+            # else:
+            #     newdata = False
         with open("data/opensea.json", "w", encoding="UTF-8") as _:
             json.dump(obj=data, fp=_, indent=4)
         return newdata

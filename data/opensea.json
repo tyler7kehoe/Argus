@@ -1,18 +1,20 @@
 [
     {
-        "channel_id": 958764310635614238,
-        "contract_address": "0x23581767a106ae21c074b2276D25e5C3e136a68b"
+        "guild_id": 958764142200754217,
+        "contracts": [
+            {
+                "channel_id": 958764310635614238,
+                "contract_address": "0x60E4d786628Fea6478F785A6d7e704777c86a7c6"
+            }
+        ]
     },
     {
-        "channel_id": 958764310635614238,
-        "contract_address": "0x495f947276749Ce646f68AC8c248420045cb7b5e"
-    },
-    {
-        "channel_id": 958764310635614238,
-        "contract_address": "0x60E4d786628Fea6478F785A6d7e704777c86a7c6"
-    },
-    {
-        "channel_id": 958764310635614238,
-        "contract_address": "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D"
+        "guild_id": 318443550557863940,
+        "contracts": [
+            {
+                "channel_id": 955277477029228595,
+                "contract_address": "0x23581767a106ae21c074b2276D25e5C3e136a68b"
+            }
+        ]
     }
 ]

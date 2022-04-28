@@ -7,6 +7,7 @@ from asyncio import sleep
 from dotenv import load_dotenv
 
 from cogs.giveaway import giveaway
+from cogs.opensea_task import Opensea_task
 # from cogs.openseas_sales import TaskHandler
 
 load_dotenv()
@@ -32,12 +33,18 @@ def load_extensions(directory):
 
 load_extensions("./cogs")
 
+@bot.event
+async def on_connect():
+    pass
 
 @bot.event
 async def on_ready():
     print(f"[Bot] I have started up and logged in {bot.user.name}#{bot.user.discriminator}!")
     g = giveaway(bot)
     await g.check_for_active_giveaways(bot)
+    # opensea = Opensea_task(bot)
+    # opensea.task_launcher()
+
 
 
 @bot.event
