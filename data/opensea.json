@@ -4,16 +4,8 @@
         "contracts": [
             {
                 "channel_id": 958764310635614238,
-                "contract_address": "0x60E4d786628Fea6478F785A6d7e704777c86a7c6"
-            }
-        ]
-    },
-    {
-        "guild_id": 318443550557863940,
-        "contracts": [
-            {
-                "channel_id": 955277477029228595,
-                "contract_address": "0x23581767a106ae21c074b2276D25e5C3e136a68b"
+                "contract_address": "0x23581767a106ae21c074b2276D25e5C3e136a68b",
+                "time": "2022-04-28 14:47:25.220560"
             }
         ]
     }

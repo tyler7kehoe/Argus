@@ -33,9 +33,14 @@ def load_extensions(directory):
 
 load_extensions("./cogs")
 
-@bot.event
-async def on_connect():
-    pass
+# @bot.event
+# async def on_connect():
+#     pass
+
+# @bot.event
+# async def on_interaction(arg):
+#     print(arg)
+#     pass
 
 @bot.event
 async def on_ready():

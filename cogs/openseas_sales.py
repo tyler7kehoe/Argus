@@ -119,6 +119,7 @@ class Openseas_Sales(commands.Cog):
                     new_set = {
                         'channel_id': channel_id,
                         'contract_address': contract_address,
+                        'time': str(datetime.datetime.utcnow())
                             }
                     if new_set in data[i]['contracts']:
                         newdata = False

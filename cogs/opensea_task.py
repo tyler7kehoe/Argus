@@ -9,11 +9,13 @@ from discord.ext import commands, tasks
 from discord.ext.commands.context import Context
 from dotenv import load_dotenv
 import requests
+from dateutil import parser
 
 load_dotenv()
  
-# maybe add a time field in the JSON (rather than last accessed) to ensure no time is missed
-
+ #TODO 
+#  add a time field in the JSON (rather than last accessed) to ensure no time is missed
+# so prevtime in each contract is updated right when the request is made
 
 class Opensea_task(commands.Cog):
     headers = {
@@ -40,11 +42,7 @@ class Opensea_task(commands.Cog):
             data = json.load(_)
         # for task in data:
         for guild in data:
-            print("prev: " + str(self.prevtime))
-            print("now: " + str(datetime.datetime.utcnow()))
-            time_delta = datetime.datetime.utcnow() - self.prevtime
-            print("delta: " + str(time_delta))
-            print()
+            
 
             # chid = task['channel_id']
             gu_id = guild['guild_id']
@@ -55,18 +53,21 @@ class Opensea_task(commands.Cog):
                 chid = contract['channel_id']
                 ch = guild_obj.get_channel(chid)
                 contract_address = contract['contract_address']
+                time = parser.parse(contract['time'])
 
                 params = {
                 "only_opensea": 'true',            
                 'asset_contract_address': contract_address,
                 "event_type": 'successful',
                 # "occurred_after": datetime.datetime.utcnow() - datetime.timedelta(seconds=5),
-                "occurred_after": datetime.datetime(2022, 4, 28, 1,00,00)
+                # "occurred_after": datetime.datetime(2022, 4, 28, 1,00,00)
+                "occurred_after": time
                 # "occurred_after": datetime.datetime.utcnow() - time_delta,
                 }
                 # print(datetime.datetime.utcnow())
                 await sleep(1)
                 addr = requests.get("https://api.opensea.io/api/v1/events?event_type=successful", params=params, headers=self.headers)
+                contract['time'] = str(datetime.datetime.utcnow())
                 addr = addr.json()
                 addr = addr['asset_events']
 
@@ -85,17 +86,15 @@ class Opensea_task(commands.Cog):
 
                     embed.set_image(url=img)
                     await ch.send(embed=embed)
+        with open("data/opensea.json", "w", encoding="UTF-8") as _:
+            json.dump(obj=data, fp=_, indent=4)
         print()
         print()
-        self.prevtime = datetime.datetime.utcnow()
 
     @printer.before_loop
     async def before_printer(self):
-        self.prevtime = datetime.datetime.utcnow()
-        try:
-            await self.bot.wait_until_ready()
-        except:
-            print("mee")
+        await self.bot.wait_until_ready()
+        
 
 
 def setup(bot):
