@@ -93,6 +93,14 @@ class Opensea_task(commands.Cog):
 
     @printer.before_loop
     async def before_printer(self):
+        with open("data/opensea.json", "r", encoding="UTF-8") as _:
+            data = json.load(_)
+        for guild in data:
+            contracts = guild['contracts']
+            for contract in contracts:
+                contract['time'] = str(datetime.datetime.utcnow())
+        with open("data/opensea.json", "w", encoding="UTF-8") as _:
+            json.dump(obj=data, fp=_, indent=4)
         await self.bot.wait_until_ready()
         
 
