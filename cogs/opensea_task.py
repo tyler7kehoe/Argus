@@ -13,10 +13,6 @@ from dateutil import parser
 
 load_dotenv()
  
- #TODO 
-#  add a time field in the JSON (rather than last accessed) to ensure no time is missed
-# so prevtime in each contract is updated right when the request is made
-
 class Opensea_task(commands.Cog):
     headers = {
             "Accept": "application/json",
@@ -32,23 +28,15 @@ class Opensea_task(commands.Cog):
         self.printer.cancel()
 
 
-
     @tasks.loop(seconds=15.0)
     async def printer(self):
-        print("checking for new opensea sales...")
-        # time = prevtime
-        # time_delta = datetime.datetime.utcnow() - prevtime
         with open("data/opensea.json", "r", encoding="UTF-8") as _:
             data = json.load(_)
-        # for task in data:
         for guild in data:
-            
-
-            # chid = task['channel_id']
             gu_id = guild['guild_id']
-            # ch = self.bot.get_channel(chid)
             guild_obj = self.bot.get_guild(gu_id)
             contracts = guild['contracts']
+
             for contract in contracts:
                 chid = contract['channel_id']
                 ch = guild_obj.get_channel(chid)
@@ -59,12 +47,8 @@ class Opensea_task(commands.Cog):
                 "only_opensea": 'true',            
                 'asset_contract_address': contract_address,
                 "event_type": 'successful',
-                # "occurred_after": datetime.datetime.utcnow() - datetime.timedelta(seconds=5),
-                # "occurred_after": datetime.datetime(2022, 4, 28, 1,00,00)
                 "occurred_after": time
-                # "occurred_after": datetime.datetime.utcnow() - time_delta,
                 }
-                # print(datetime.datetime.utcnow())
                 await sleep(1)
                 addr = requests.get("https://api.opensea.io/api/v1/events?event_type=successful", params=params, headers=self.headers)
                 contract['time'] = str(datetime.datetime.utcnow())
@@ -83,13 +67,12 @@ class Opensea_task(commands.Cog):
                     embed.add_field(name='Seller:', value=f'[{from_acc[:-35]}](https://etherscan.io/address/{from_acc})')
                     embed.add_field(name='Buyer:', value=f'[{to_acc[:-35]}](https://etherscan.io/address/{to_acc})')     # trouble reaching buyer location with indexing.
                     embed.timestamp = datetime.datetime.now()
-
                     embed.set_image(url=img)
                     await ch.send(embed=embed)
+
         with open("data/opensea.json", "w", encoding="UTF-8") as _:
             json.dump(obj=data, fp=_, indent=4)
-        print()
-        print()
+
 
     @printer.before_loop
     async def before_printer(self):
@@ -103,7 +86,6 @@ class Opensea_task(commands.Cog):
             json.dump(obj=data, fp=_, indent=4)
         await self.bot.wait_until_ready()
         
-
 
 def setup(bot):
     bot.add_cog(Opensea_task(bot))
