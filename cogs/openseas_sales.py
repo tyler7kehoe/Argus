@@ -1,12 +1,9 @@
 import datetime
 import json
 import discord
-import os
 from discord.ext import commands, tasks
 from discord.ext.commands.context import Context
 from dotenv import load_dotenv
-import requests
-from multiprocessing import Pool
 
 load_dotenv()
 global task_schedule

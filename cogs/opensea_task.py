@@ -1,16 +1,12 @@
 from asyncio import sleep
-from cgi import print_exception
 import datetime
 import json
 import os
-from traceback import print_exc
 import discord
 from discord.ext import commands, tasks
-from discord.ext.commands.context import Context
 from dotenv import load_dotenv
 import requests
 from dateutil import parser
-from dateutil.tz import tzlocal
 import time as t
 
 
