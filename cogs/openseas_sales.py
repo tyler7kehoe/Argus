@@ -42,7 +42,8 @@ class Openseas_Sales(commands.Cog):
             new_set = {
                 'channel_id': channel_id,
                 'contract_address': contract_address,
-                'time': str(datetime.datetime.utcnow())
+                'time': str(datetime.datetime.utcnow()),
+                'lastId': -1
                             }
             for j in range(len(data[i]['contracts'])):
                 if new_set['channel_id'] == data[i]['contracts'][j]['channel_id'] \
