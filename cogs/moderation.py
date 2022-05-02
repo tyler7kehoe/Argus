@@ -107,6 +107,8 @@ class Moderation(commands.Cog):
             for set in data:
                 if set['guild_id'] == guild_id:
                     return set['blacklist']
+            else:
+                return ["No members are currently blacklisted."]
 
     async def get_chid(self, guild_id):
         with open("data/blacklist.json", "r") as _:

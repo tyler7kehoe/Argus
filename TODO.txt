@@ -6,10 +6,7 @@ If these could all be slash commands <3
 
 What is it: Help
 
-What is does: Lists all of the commands and how to use them
-
-Must have permission: ban_members
-
+- DONE -
 
 
 
@@ -76,11 +73,7 @@ Core= Administrator
 
 What is it: Opensea sales
 
-What it does: Will automatically post opensea sales in an embed with things like in the image.
-
-How it should work: Admin just needs to setup the sales channel and the bot should just need the channel and contract address.
-
-Example: /opensea "sales channel" "0xABCDEFGH"
+- DONE -
 
 Example GIT: https://github.com/0xEssential/opensea-discord-bot (not sure if it's up to date)
 
@@ -89,6 +82,8 @@ Example GIT: https://github.com/0xEssential/opensea-discord-bot (not sure if it'
 
 
 What is it: Polls
+
+- DONE? - Not sure yet if it will work if bot goes offline in middle of poll
 
 Implemenation idea: Like a giveaway but with reactions. Must be reactivated like a giveaway is if the bot restarts. The rest should be pretty streamlined.
 

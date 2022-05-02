@@ -115,70 +115,79 @@ class Setup(commands.Cog):
 
         help = await guild.create_text_channel("🆘﹒help", category=support)
 
-        await ctx.respond("Categories and channels created")
+        await ctx.respond("Categories and channels created\n")
 
 
-        
 
+        await ctx.send("Would you like to keep these channels and roles?")
+        await ctx.send("If you do not confirm with 'yes', the setup will be undone in 30 seconds.")
+        await ctx.send("Any other input will undo /setup")
+        try:
+            input = await self.bot.wait_for("message", timeout=30)
+            if(input.content == 'yes') :
+                undo = False
+            else:
+                undo = True
+        except:
+            undo = True
 
         
         # to remove roles, channels, and categories(for testing)
         ######################
-        
-        # time.sleep(10)
-        # await ctx.respond("Deleting categories and channels")
+        if undo:
+            await ctx.respond("Deleting categories and channels")
 
-        # await core_chan.delete()
-        # await mod_chat.delete()
-        # await bot_commands.delete()
-        
-        # await verification.delete()
-        
-        # await rules_chan.delete()
-        # await announcements.delete()
-        # await official_links.delete()
-        # await roadmap.delete()
-        # await giveaways.delete()
-        # await tweets.delete()
+            await core_chan.delete()
+            await mod_chat.delete()
+            await bot_commands.delete()
+            
+            await verification.delete()
+            
+            await rules_chan.delete()
+            await announcements.delete()
+            await official_links.delete()
+            await roadmap.delete()
+            await giveaways.delete()
+            await tweets.delete()
 
-        # await general_chan.delete()
-        # await mh.delete()
-        # await questions.delete()
-        # await suggestions.delete()
-        # await scam.delete()
+            await general_chan.delete()
+            await mh.delete()
+            await questions.delete()
+            await suggestions.delete()
+            await scam.delete()
 
-        # await g1.delete()
-        # await g2.delete()
-        # await g3.delete()
+            await g1.delete()
+            await g2.delete()
+            await g3.delete()
 
-        # await chinese.delete()
-        # await dutch.delete()
-        # await filipinio.delete()
-        # await german.delete()
-        # await portugese.delete()
-        # await spanish.delete()
+            await chinese.delete()
+            await dutch.delete()
+            await filipinio.delete()
+            await german.delete()
+            await portugese.delete()
+            await spanish.delete()
 
-        # await help.delete()
-
-
-        # await team.delete()
-        # await official_things.delete()
-        # await general.delete()
-        # await voice_chats.delete()
-        # await languages.delete()
-        # await support.delete()
-        # await start_here.delete()
+            await help.delete()
 
 
-        # await ctx.respond("deleting roles")
-        # role_object = discord.utils.get(guild.roles, name="Core")
-        # await role_object.delete()
-        # role_object = discord.utils.get(guild.roles, name="Lead Mods")
-        # await role_object.delete()
-        # role_object = discord.utils.get(guild.roles, name="Mods")
-        # await role_object.delete()
-        # role_object = discord.utils.get(guild.roles, name="Verified")
-        # await role_object.delete()
+            await team.delete()
+            await official_things.delete()
+            await general.delete()
+            await voice_chats.delete()
+            await languages.delete()
+            await support.delete()
+            await start_here.delete()
+
+
+            await ctx.send("deleting roles")
+            role_object = discord.utils.get(guild.roles, name="Core")
+            await role_object.delete()
+            role_object = discord.utils.get(guild.roles, name="Lead Mods")
+            await role_object.delete()
+            role_object = discord.utils.get(guild.roles, name="Mods")
+            await role_object.delete()
+            role_object = discord.utils.get(guild.roles, name="Verified")
+            await role_object.delete()
 
         #######################
 

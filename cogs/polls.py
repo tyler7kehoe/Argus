@@ -1,4 +1,5 @@
 import asyncio
+from email import message
 import discord
 from discord.ext import commands
 from discord.ext.commands.context import Context
@@ -62,25 +63,35 @@ class Polls(commands.Cog):
             "7\ufe0f\u20e3",
             "8\ufe0f\u20e3",
             "9\ufe0f\u20e3",
-            "\ud83d\udd1f"
+            "\U0001F51F"
         ]
 
-        embed = discord.Embed(title="Poll! :bar_chart:", color=discord.Color.dark_purple(), description='React with corresponding '
-                                                                                            'number to vote!')
+        embed = discord.Embed(title="Poll! :bar_chart:", color=discord.Color.dark_purple(),)
+        embed.add_field(name="React with corresponding number to vote!", value="\u200b", inline=True)
         for i in range(number_of_options):
             embed.add_field(name=f'{emojis[i]} :', value=options[i], inline=False)
         embed.add_field(name=f'Length of poll: {time.casefold()}',
-                        value=f'Poll ends: <t:{unixTimestamp}:f>\n(<t:{unixTimestamp}:R>)', inline=False)
+                        value=f'Poll ends: <t:{unixTimestamp}:f>\n(<t:{unixTimestamp}:R>)', inline=True)
         poll_msg = await ch.send(embed=embed)
         await ctx.respond('Poll sent to designated text-channel!')
         for i in range(number_of_options):
             await poll_msg.add_reaction(emojis[i])
 
         await asyncio.sleep(intTime)
-        await self.end_poll(poll_msg, ch)
+        cache_msg = await ch.fetch_message(poll_msg.id)
+        await self.end_poll(cache_msg, embed, time, ch)
 
-    async def end_poll(self, message, channel):
-        pass
+    async def end_poll(self, message, embed, time, channel):
+        print(message.reactions)
+
+        embed.set_field_at(0, name="Results:", value="\u200b", inline=False)
+        embed.set_field_at(len(embed.fields)-1, name=f'Length of poll: {time.casefold()}', value = "Poll has ended.", inline=False)
+        for i in range(len(message.reactions)):
+            val = embed.fields[i+1].value
+            embed.set_field_at(i+1, name=f'{val} :  ', value=f'{str(message.reactions[i].count - 1)} votes', inline=False)
+        await message.edit(embed = embed)
+        await message.clear_reactions()
+
 
 def setup(bot):
     bot.add_cog(Polls(bot))

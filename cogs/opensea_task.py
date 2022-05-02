@@ -62,6 +62,18 @@ class Opensea_task(commands.Cog):
                 contract['time'] = newtime
                 addr = addr.json()
                 addr = addr['asset_events']
+
+                # get floor price and ext_url of the current collection
+                if len(addr) > 0:
+                    ext_url = addr[0]['asset']['collection']['external_url']
+                    slug = addr[0]['asset']['collection']['slug']
+                    url = f"https://api.opensea.io/api/v1/collection/{slug}/stats"
+                    headers = {"Accept": "application/json"}
+                    get_fp = requests.get(url, headers=headers)
+                    get_fp = get_fp.json()
+                    fp = get_fp['stats']['floor_price']
+                    if len(str(fp)) > 10:
+                        fp = str(fp)[:3]
                 
                 index = 1
                 for i in range(len(addr)-1, -1, -1):
@@ -79,16 +91,6 @@ class Opensea_task(commands.Cog):
                     buyer = addr[i]['winner_account']['address']
                     permalink = addr[i]['asset']['permalink']
 
-                    # get the floor price of the current collection
-                    slug = addr[i]['asset']['collection']['slug']
-                    url = f"https://api.opensea.io/api/v1/collection/{slug}/stats"
-                    headers = {"Accept": "application/json"}
-                    get_fp = requests.get(url, headers=headers)
-                    get_fp = get_fp.json()
-                    fp = get_fp['stats']['floor_price']
-                    if len(str(fp)) > 10:
-                        fp = str(fp)[:3]
-
                     # Following block of code converts long num into price of given payment token
                     price_before_calc = addr[i]["total_price"]
                     decimals = addr[i]["payment_token"]["decimals"]
@@ -105,7 +107,7 @@ class Opensea_task(commands.Cog):
                     price = f'{final_price} {addr[i]["payment_token"]["symbol"]}'
 
                     embed = discord.Embed(title=f"**New Sale!**", color=discord.Color.random(),
-                                          description=f'{title} | [{description}]({permalink})')
+                                          description=f'[{title}]({permalink}) | [{description}]({ext_url})')
                     embed.add_field(name=':moneybag: Seller:', value=f'[{seller[:-35]}](https://etherscan.io/address/{seller})')
                     embed.add_field(name=':shopping_cart: Buyer:', value=f'[{buyer[:-35]}](https://etherscan.io/address/{buyer})')
                     embed.add_field(name=':money_with_wings: Price:', value=f'{price}')
