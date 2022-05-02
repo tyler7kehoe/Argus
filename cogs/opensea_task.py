@@ -28,7 +28,7 @@ class Opensea_task(commands.Cog):
         self.check_for_sales.cancel()
 
 
-    @tasks.loop(seconds=240)
+    @tasks.loop(seconds=15)
     async def check_for_sales(self):
         with open("data/opensea.json", "r", encoding="UTF-8") as _:
             data = json.load(_)
@@ -47,7 +47,7 @@ class Opensea_task(commands.Cog):
                 "only_opensea": 'true',            
                 'asset_contract_address': contract_address,
                 "event_type": 'successful',
-                "occurred_after": time - datetime.timedelta(seconds=120)
+                "occurred_after": time - datetime.timedelta(seconds=180)
                 } 
                 newtime = str(datetime.datetime.utcnow())
                   
@@ -86,8 +86,8 @@ class Opensea_task(commands.Cog):
                     get_fp = requests.get(url, headers=headers)
                     get_fp = get_fp.json()
                     fp = get_fp['stats']['floor_price']
-                    if len(fp) > 10:
-                        fp = fp[:3]
+                    if len(str(fp)) > 10:
+                        fp = str(fp)[:3]
 
                     # Following block of code converts long num into price of given payment token
                     price_before_calc = addr[i]["total_price"]
