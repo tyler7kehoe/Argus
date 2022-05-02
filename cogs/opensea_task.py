@@ -79,15 +79,44 @@ class Opensea_task(commands.Cog):
                     buyer = addr[i]['winner_account']['address']
                     permalink = addr[i]['asset']['permalink']
 
-                    embed = discord.Embed(title=f"{title}", color=discord.Color.blue(),
-                                    description=f'[{description}]({permalink})')
-                    embed.add_field(name='Seller:', value=f'[{seller[:-35]}](https://etherscan.io/address/{seller})')
-                    embed.add_field(name='Buyer:', value=f'[{buyer[:-35]}](https://etherscan.io/address/{buyer})')     # trouble reaching buyer location with indexing.
+                    # get the floor price of the current collection
+                    slug = addr[i]['asset']['collection']['slug']
+                    url = f"https://api.opensea.io/api/v1/collection/{slug}/stats"
+                    headers = {"Accept": "application/json"}
+                    get_fp = requests.get(url, headers=headers)
+                    get_fp = get_fp.json()
+                    fp = get_fp['stats']['floor_price']
+                    if len(fp) > 10:
+                        fp = fp[:3]
+
+                    # Following block of code converts long num into price of given payment token
+                    price_before_calc = addr[i]["total_price"]
+                    decimals = addr[i]["payment_token"]["decimals"]
+                    temp_list = list(str(price_before_calc).strip(" "))
+                    loc = len(temp_list)
+                    for num in range(decimals + 1):
+                        if num == decimals:
+                            temp_list.insert(loc, ".")
+                        loc -= 1
+                    final_price = ''.join([str(item) for item in temp_list])
+                    final_price = final_price.rstrip('0')
+                    if final_price.endswith('.'):
+                        final_price += '0'
+                    price = f'{final_price} {addr[i]["payment_token"]["symbol"]}'
+
+                    embed = discord.Embed(title=f"**New Sale!**", color=discord.Color.random(),
+                                          description=f'{title} | [{description}]({permalink})')
+                    embed.add_field(name=':moneybag: Seller:', value=f'[{seller[:-35]}](https://etherscan.io/address/{seller})')
+                    embed.add_field(name=':shopping_cart: Buyer:', value=f'[{buyer[:-35]}](https://etherscan.io/address/{buyer})')
+                    embed.add_field(name=':money_with_wings: Price:', value=f'{price}')
+                    embed.add_field(name=':chart_with_upwards_trend: Floor: ', value=f'{fp}')
+
                     timestamp = parser.parse(addr[i]["event_timestamp"])
                     now = t.time()
                     offset = datetime.datetime.fromtimestamp(now) - datetime.datetime.utcfromtimestamp(now)
                     saletime = timestamp + offset
                     embed.timestamp = saletime
+                    embed.set_footer(text='Sent by Argus')
                     embed.set_image(url=img)
                     await ch.send(embed=embed)
                     embed.clear_fields()
