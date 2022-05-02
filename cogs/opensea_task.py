@@ -21,15 +21,15 @@ class Opensea_task(commands.Cog):
     
     def __init__(self, bot):
         self.bot: commands.Bot = bot
-        self.printer.start()
+        self.check_for_sales.start()
         
 
     def cog_unload(self):
-        self.printer.cancel()
+        self.check_for_sales.cancel()
 
 
-    @tasks.loop(seconds=360)
-    async def printer(self):
+    @tasks.loop(seconds=240)
+    async def check_for_sales(self):
         with open("data/opensea.json", "r", encoding="UTF-8") as _:
             data = json.load(_)
         for guild in data:
@@ -47,14 +47,17 @@ class Opensea_task(commands.Cog):
                 "only_opensea": 'true',            
                 'asset_contract_address': contract_address,
                 "event_type": 'successful',
-                "occurred_after": time - datetime.timedelta(seconds=180)
+                "occurred_after": time - datetime.timedelta(seconds=120)
                 } 
                 newtime = str(datetime.datetime.utcnow())
                   
                 addr = requests.get("https://api.opensea.io/api/v1/events?event_type=successful", params=params, headers=self.headers)
+                count = 0
                 while addr.status_code == 503:
                     addr = requests.get("https://api.opensea.io/api/v1/events?event_type=successful", params=params, headers=self.headers)
-                    print("error 503")
+                    count += 1
+                    if count > 5:
+                        break
 
                 contract['time'] = newtime
                 addr = addr.json()
@@ -72,11 +75,12 @@ class Opensea_task(commands.Cog):
                     title = addr[i]['asset']['name']
                     description = addr[i]['asset']['asset_contract']["name"]
                     img = addr[i]['asset']['image_url']
-                    seller = addr[i]['transaction']['to_account']['address']
-                    buyer = addr[i]['transaction']['from_account']['address']
+                    seller = addr[i]['seller']['address']
+                    buyer = addr[i]['winner_account']['address']
+                    permalink = addr[i]['asset']['permalink']
 
                     embed = discord.Embed(title=f"{title}", color=discord.Color.blue(),
-                                    description=f'{description}')
+                                    description=f'[{description}]({permalink})')
                     embed.add_field(name='Seller:', value=f'[{seller[:-35]}](https://etherscan.io/address/{seller})')
                     embed.add_field(name='Buyer:', value=f'[{buyer[:-35]}](https://etherscan.io/address/{buyer})')     # trouble reaching buyer location with indexing.
                     timestamp = parser.parse(addr[i]["event_timestamp"])
@@ -86,6 +90,7 @@ class Opensea_task(commands.Cog):
                     embed.timestamp = saletime
                     embed.set_image(url=img)
                     await ch.send(embed=embed)
+                    embed.clear_fields()
                 if len(addr) > 0:
                     contract['lastId'] = addr[0]['id']
 
@@ -94,8 +99,8 @@ class Opensea_task(commands.Cog):
             json.dump(obj=data, fp=_, indent=4)
 
 
-    @printer.before_loop
-    async def before_printer(self):
+    @check_for_sales.before_loop
+    async def before_check_for_sales(self):
         with open("data/opensea.json", "r", encoding="UTF-8") as _:
             data = json.load(_)
         for guild in data:
