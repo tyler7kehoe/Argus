@@ -31,14 +31,16 @@ class Whitelist(commands.Cog):
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="get_whitelist", description="Get CSV file of all whitelist addresses")
     async def get_whitelist(self, ctx: Context):
-        # df = pd.read_json(r'data/whitelist.json')
+        # Get list of wallet addresses from specific guild
         with open("data/whitelist.json", "r") as _:
             data = json.load(_)
             for item in data:
                 if item['guild_id'] == ctx.guild.id:
                     whitelist_data = item['whitelist']
+        # convert from json data into a csv
         df = pd.DataFrame(whitelist_data, columns=['Addresses'])
         df.to_csv(rf'data/whitelists/{ctx.guild.name}-whitelist.csv', index=None)
+        # send to user
         await ctx.respond('Whitelist sent!')
         await ctx.send(file=discord.File(rf'data/whitelists/{ctx.guild.name}-whitelist.csv'))
 
@@ -78,6 +80,6 @@ async def set_input(guild_id, wallet):
         json.dump(obj=data, fp=_, indent=4)
 
 
-
 def setup(bot):
     bot.add_cog(Whitelist(bot))
+    
