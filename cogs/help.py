@@ -40,7 +40,12 @@ class Help(commands.Cog):
         embed.add_field(name="/record", value="Records the wallet address for a user.\n", inline=False)
         
         embed.add_field(name="/getrecord", value="Gets the wallet address for a user.\n", inline=False)
-                
+
+        embed.add_field(name="/whitelist", value="Calls button for whitelist members to enter their whitelist address.\n"
+                                                 "If button stops working, please reuse command.", inline=False)
+
+        embed.add_field(name="/get_whitelist", value="Sends a CSV file containing all whitelist addresses.\n", inline=False)
+
         return await ctx.respond(embed=embed)
 
 
