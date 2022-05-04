@@ -21,8 +21,7 @@ class Openseas_Sales(commands.Cog):
         guild_id = ctx.guild.id
     
         if(self.log_contract_tracker(guild_id, ch.id, contract_address)):
-            await ctx.respond('Most recent transaction sent to designated text-channel\n'
-                          'Transactions from this contract will now be tracked.')
+            await ctx.respond('Transactions from this contract will now be tracked.')
         else:
             await ctx.respond("This contract is already being tracked in this channel.")
 

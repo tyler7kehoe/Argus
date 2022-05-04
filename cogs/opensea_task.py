@@ -50,8 +50,8 @@ class Opensea_task(commands.Cog):
                 "occurred_after": time - datetime.timedelta(seconds=180)
                 } 
                 newtime = str(datetime.datetime.utcnow())
-                  
                 addr = requests.get("https://api.opensea.io/api/v1/events?event_type=successful", params=params, headers=self.headers)
+
                 count = 0
                 while addr.status_code == 503:
                     addr = requests.get("https://api.opensea.io/api/v1/events?event_type=successful", params=params, headers=self.headers)
