@@ -13,25 +13,28 @@ class Setup(commands.Cog):
         self.bot: commands.Bot = bot
 
     @commands.has_permissions(administrator=True)
-    @commands.slash_command(name="setup", description="Setup server with default channels and roles.",
-                            guild_ids=[int(os.getenv("GUILD_ID"))])
+    @commands.slash_command(name="setup", description="Setup server with default channels and roles.")
     async def setup(self, ctx: Context):
         guild = ctx.guild
         
         # Create "Core" role with permissions
         core = await guild.create_role(name="Core", permissions=discord.Permissions.all(), color=0xFF0000)
+        core.hoist = True
         
         # Create "Lead Mods" role with permissions
         perms = discord.Permissions(141972467270)
         lead_mods = await guild.create_role(name="Lead Mods", permissions=perms, color=0xFFFF00)
+        lead_mods.hoist = True
 
-        # # Create "Mods" role with permissions 
+        # Create "Mods" role with permissions
         perms = discord.Permissions(141838249538)
         mods = await guild.create_role(name="Mods", permissions=perms, color=0x00FF00)
+        mods.hoist = True
 
         # Create "Verified" role with permissions
         perms = discord.Permissions(141838077504)
         verified = await guild.create_role(name="Verified", permissions=perms, color=0x00FFFF)
+        verified.hoist = True
 
         await ctx.respond("Roles created")
 
@@ -43,11 +46,11 @@ class Setup(commands.Cog):
             verified: discord.PermissionOverwrite(view_channel=True, send_messages=True)
         }
         official_things_overwrite = {
-            guild.default_role: discord.PermissionOverwrite(view_channel=True, send_messages=False),
-            core: discord.PermissionOverwrite(send_messages=True),
-            lead_mods: discord.PermissionOverwrite(send_messages=False),
-            mods: discord.PermissionOverwrite(send_messages=False),
-            verified: discord.PermissionOverwrite(send_messages=False)
+            guild.default_role: discord.PermissionOverwrite(view_channel=False, send_messages=False),
+            core: discord.PermissionOverwrite(view_channel=True, send_messages=True),
+            lead_mods: discord.PermissionOverwrite(view_channel=True, send_messages=False),
+            mods: discord.PermissionOverwrite(view_channel=True, send_messages=False),
+            verified: discord.PermissionOverwrite(view_channel=True, send_messages=False)
         }
         team_overwrite = {
             guild.default_role: discord.PermissionOverwrite(view_channel=False),
