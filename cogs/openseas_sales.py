@@ -43,7 +43,7 @@ class Openseas_Sales(commands.Cog):
         with open("data/opensea.json", "w", encoding="UTF-8") as _:
             json.dump(obj=data, fp=_, indent=4)
         if not found:
-            ctx.respond(f'Contract: {contract_address} not found')
+            await ctx.respond(f'Contract: {contract_address} not found')
 
 
 
