@@ -165,7 +165,7 @@ class giveaway(commands.Cog):
         # get winners wallet addresses
         winnerWallets = list()
         for i in range(num_winners):
-            winnerWallets.append(await get_input(winnerIDs[i]))
+            winnerWallets.append(await get_input(guild.id, winnerIDs[i]))
         # format and print winners + wallet addresses
         winnerOutput = f'Winners of {end_prize}:\n'
         for i in range(num_winners):
