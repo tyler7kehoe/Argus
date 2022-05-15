@@ -110,7 +110,7 @@ class giveaway(commands.Cog):
 
             if new_set not in data:
                 data.append(new_set)
-        with open("gaw_log.json", "w") as _:
+        with open("data/gaw_log.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
 
     async def check_for_active_giveaways(self, ctx: Context):

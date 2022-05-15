@@ -17,8 +17,6 @@ class Whitelist(commands.Cog):
         enter_button = Button(label='Enter here!', style=discord.ButtonStyle.blurple, custom_id='b1')
         button_grab = Button(label='Get your address!', style=discord.ButtonStyle.green, emoji="📄")
 
-
-
         enter_button.callback = self.button_callback
         button_grab.callback = self.button_grabber
 
