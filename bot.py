@@ -5,6 +5,7 @@ from asyncio import sleep
 from dotenv import load_dotenv
 
 from cogs.giveaway import giveaway
+from cogs.polls import Polls
 
 
 load_dotenv()
@@ -34,7 +35,9 @@ load_extensions("./cogs")
 async def on_ready():
     print(f"[Bot] I have started up and logged in {bot.user.name}#{bot.user.discriminator}!")
     g = giveaway(bot)
+    p = Polls(bot)
     await g.check_for_active_giveaways(bot)
+    await p.check_for_active_polls()
 
 
 @bot.event
@@ -46,4 +49,4 @@ async def on_member_join(member):
             break
 
 
-bot.run(os.getenv("TOKEN"))
+bot.run(os.getenv("TOKEN2"))

@@ -1,5 +1,7 @@
 import asyncio
-from email import message
+import json
+import time
+
 import discord
 from discord.ext import commands
 from discord.ext.commands.context import Context
@@ -76,22 +78,59 @@ class Polls(commands.Cog):
         await ctx.respond('Poll sent to designated text-channel!')
         for i in range(number_of_options):
             await poll_msg.add_reaction(emojis[i])
-
+        # add data to json
+        self.set_data(poll_msg.id, unixTimestamp, ch.id)
+        # start timer for poll
         await asyncio.sleep(intTime)
         cache_msg = await ch.fetch_message(poll_msg.id)
-        await self.end_poll(cache_msg, embed, time, ch)
+        await self.end_poll(cache_msg, embed, unixTimestamp)
 
-    async def end_poll(self, message, embed, time, channel):
-        print(message.reactions)
-
+    async def end_poll(self, message, embed, time):
         embed.set_field_at(0, name="Results:", value="\u200b", inline=False)
-        embed.set_field_at(len(embed.fields)-1, name=f'Length of poll: {time.casefold()}', value = "Poll has ended.", inline=False)
+        embed.set_field_at(len(embed.fields)-1, name=f'Poll ended <t:{time}:f>', value="Argus", inline=False)
         for i in range(len(message.reactions)):
             val = embed.fields[i+1].value
             embed.set_field_at(i+1, name=f'{val} :  ', value=f'{str(message.reactions[i].count - 1)} votes', inline=False)
-        await message.edit(embed = embed)
+        await message.edit(embed=embed)
         await message.clear_reactions()
+        self.remove_from_json(message.id)
 
+    async def check_for_active_polls(self):
+        with open("data/active_polls.json") as _:
+            data = json.load(_)
+            await asyncio.gather(*(self.reactivate_poll(item['poll_id'], item['end_time'], item['host_channel']) for item in data))
+
+    async def reactivate_poll(self, poll_id, end_time, host_channel):
+        print(f'[Bot] Poll {poll_id} has been reactivated!')
+        await asyncio.sleep(end_time-time.time())
+        ch = self.bot.get_channel(host_channel)
+        message = await ch.fetch_message(poll_id)
+        embedFromMsg = message.embeds[0]
+        await self.end_poll(message, embedFromMsg, end_time)
+
+    def set_data(self, message_id, end_time, channel_id):
+        with open("data/active_polls.json", "r") as _:
+            data = json.load(_)
+
+            new_set = {
+                "poll_id": message_id,
+                "end_time": end_time,
+                "host_channel": channel_id,
+            }
+
+            if new_set not in data:
+                data.append(new_set)
+        with open("data/active_polls.json", "w") as _:
+            json.dump(obj=data, fp=_, indent=4)
+
+    def remove_from_json(self, poll_id):
+        with open("data/active_polls.json", "r") as _:
+            data = json.load(_)
+            for item in data:
+                if item["poll_id"] == poll_id:
+                    data.remove(item)
+        with open("data/active_polls.json", "w") as _:
+            json.dump(obj=data, fp=_, indent=4)
 
 def setup(bot):
     bot.add_cog(Polls(bot))
