@@ -83,9 +83,8 @@ Example GIT: https://github.com/0xEssential/opensea-discord-bot (not sure if it'
 
 What is it: Polls
 
-- DONE? - Not sure yet if it will work if bot goes offline in middle of poll
+- DONE? - 
 
-Implemenation idea: Like a giveaway but with reactions. Must be reactivated like a giveaway is if the bot restarts. The rest should be pretty streamlined.
 
 
 Possibilites if there is time:
