@@ -14,7 +14,7 @@ class Polls(commands.Cog):
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="poll",
                             description="Create a poll. Max of 10 options")
-    async def poll(self, ctx: Context, text_channel, number_of_options):
+    async def poll(self, ctx: Context, text_channel, number_of_options, question):
         number_of_options = int(number_of_options)
         chID_stripped = text_channel[2:]
         chID_stripped = chID_stripped[:-1]
@@ -69,6 +69,7 @@ class Polls(commands.Cog):
         ]
 
         embed = discord.Embed(title="Poll! :bar_chart:", color=discord.Color.dark_purple(),)
+        embed.add_field(name=f'`{question}`', value='\u200b', inline=False)
         embed.add_field(name="React with corresponding number to vote!", value="\u200b", inline=True)
         for i in range(number_of_options):
             embed.add_field(name=f'{emojis[i]} :', value=options[i], inline=False)
@@ -81,13 +82,14 @@ class Polls(commands.Cog):
         # add data to json
         self.set_data(poll_msg.id, unixTimestamp, ch.id)
         # start timer for poll
-        await asyncio.sleep(intTime)
+        await asyncio.sleep(poll_time)
         cache_msg = await ch.fetch_message(poll_msg.id)
         await self.end_poll(cache_msg, embed, unixTimestamp)
 
     async def end_poll(self, message, embed, time):
         embed.set_field_at(0, name="Results:", value="\u200b", inline=False)
         embed.set_field_at(len(embed.fields)-1, name=f'Poll ended <t:{time}:f>', value="Argus", inline=False)
+        embed.remove_field(1)
         for i in range(len(message.reactions)):
             val = embed.fields[i+1].value
             embed.set_field_at(i+1, name=f'{val} :  ', value=f'{str(message.reactions[i].count - 1)} votes', inline=False)
