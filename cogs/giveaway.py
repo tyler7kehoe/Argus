@@ -16,7 +16,7 @@ class giveaway(commands.Cog):
     # This command creates a giveaway, converts the time, waits until the time is up, and selects a winner.
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="create_giveaway", description="Start a giveaway with randomly selected winners")
-    async def gcreate(self, ctx: Context):           # TODO: continue porting over to slash -- change all to num_of_winners, create questions, .respond
+    async def gcreate(self, ctx: Context):
 
         def check(m):
             return m.content and m.channel == ctx.channel
