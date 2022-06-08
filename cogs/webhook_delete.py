@@ -32,10 +32,7 @@ class WebhookDelete(commands.Cog):
                                     for channel in member.guild.channels:
                                         await channel.set_permissions(member, send_messages=False, view_channel=False,
                                                                       view_guild_insights=False)
-                                    em = embed_builder.embed_builder('Webhook Detected!',
-                                                                f'{member.name} created and sent a webhook!',
-                                                                embed_builder.embed_color.FAILURE,
-                                                                footer='Check audit logs for more info')
+
 
 
 

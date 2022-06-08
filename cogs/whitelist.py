@@ -2,9 +2,12 @@ import json
 
 import discord
 from discord.ext import commands
+from discord.ext.commands import check
 from discord.ext.commands.context import Context
 from discord.ui import Button, View, InputText, Modal
 import pandas as pd
+from cogs.premium import *
+
 
 
 class Whitelist(commands.Cog):
@@ -13,6 +16,7 @@ class Whitelist(commands.Cog):
 
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="whitelist", description="Call button to log whitelist addresses")
+    @check(check_if_guild_has_premium)
     async def whitelist(self, ctx: Context):
         enter_button = Button(label='Enter here!', style=discord.ButtonStyle.blurple, custom_id='b1')
         button_grab = Button(label='Get your address!', style=discord.ButtonStyle.green, emoji="📄")
@@ -25,6 +29,10 @@ class Whitelist(commands.Cog):
         view.add_item(button_grab)
         await ctx.respond('Button sent!', ephemeral=True)
         await ctx.send('Congratulations on winning whitelist, please enter wallet address here', view=view)
+
+    @whitelist.error
+    async def whitelist_error(self, ctx: Context, error):
+        await error_msg(error, ctx)
 
     # call input box to screen after button click
     async def button_callback(self, interaction):
@@ -47,6 +55,7 @@ class Whitelist(commands.Cog):
 
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="get_whitelist", description="Get CSV file of all whitelist addresses")
+    @check(check_if_guild_has_premium)
     async def get_whitelist(self, ctx: Context):
         # Get list of wallet addresses from specific guild
         with open("data/whitelist.json", "r") as _:
@@ -62,6 +71,10 @@ class Whitelist(commands.Cog):
         # send to user
         await ctx.respond('Whitelist sent!')
         await ctx.send(file=discord.File(rf'data/whitelists/{ctx.guild.name}-whitelist.csv'))
+
+    @get_whitelist.error
+    async def add_to_blacklist_error(self, ctx: Context, error):
+        await error_msg(error, ctx)
 
 # creation of input text pop-up
 class Popup(Modal):

@@ -2,8 +2,11 @@ import datetime
 import json
 import discord
 from discord.ext import commands, tasks
+from discord.ext.commands import check
 from discord.ext.commands.context import Context
 from dotenv import load_dotenv
+from cogs.premium import *
+
 
 load_dotenv()
 global task_schedule
@@ -16,6 +19,7 @@ class Openseas_Sales(commands.Cog):
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="opensea",
                             description="Automatically post opensea sales in an embed")
+    @check(check_if_guild_has_premium)
     async def opensea(self, ctx: Context, channel, contract_address):
         ch = self.bot.get_channel(int(channel[2:-1]))
         guild_id = ctx.guild.id
@@ -25,9 +29,14 @@ class Openseas_Sales(commands.Cog):
         else:
             await ctx.respond("This contract is already being tracked in this channel.")
 
+    @opensea.error
+    async def opensea_error(self, ctx: Context, error):
+        await error_msg(error, ctx)
+
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="opensea_remove_contract",
                             description="Remove a contract from being tracked")
+    @check(check_if_guild_has_premium)
     async def opensea_remove(self, ctx: Context, contract_address):
         guild_id = ctx.guild.id
         found = False
@@ -44,6 +53,10 @@ class Openseas_Sales(commands.Cog):
             json.dump(obj=data, fp=_, indent=4)
         if not found:
             await ctx.respond(f'Contract: {contract_address} not found')
+
+    @opensea_remove.error
+    async def opensea_remove_error(self, ctx: Context, error):
+        await error_msg(error, ctx)
 
 
 

@@ -2,10 +2,13 @@ import json
 import discord
 from discord.ext import commands
 from discord.ext.commands.context import Context
+from discord.ext.commands import check
 from dotenv import load_dotenv
 from api import embed_builder
+from cogs.premium import *
 
 load_dotenv()
+
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
@@ -13,6 +16,7 @@ class Moderation(commands.Cog):
 
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="add_to_blacklist", description="Separate words by comma, no spaces")
+    @check(check_if_guild_has_premium)
     async def add_to_blacklist(self, ctx: Context, blacklist, channel_to_log):
         blacklist = str(blacklist).split(',')
         chID = channel_to_log[2:]
@@ -20,8 +24,13 @@ class Moderation(commands.Cog):
         await self.log_term(ctx.guild.id, blacklist, chID)
         await ctx.respond(f'Terms {blacklist} added to blacklist.')
 
+    @add_to_blacklist.error
+    async def add_to_blacklist_error(self, ctx: Context, error):
+        await error_msg(error, ctx)
+
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="remove_from_blacklist", description="Separate words by comma, no spaces")
+    @check(check_if_guild_has_premium)
     async def remove_from_blacklist(self, ctx: Context, terms):
         terms = str(terms).split(',')
         with open("data/blacklist.json", "r") as _:
@@ -47,6 +56,10 @@ class Moderation(commands.Cog):
                         await ctx.respond(f'{terms} removed from blacklist.')
         with open("data/blacklist.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
+
+    @remove_from_blacklist.error
+    async def remove_from_blacklist_error(self, ctx: Context, error):
+        await error_msg(error, ctx)
 
     @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="get_blacklist", description="Returns list of blacklisted terms that are not allowed"
