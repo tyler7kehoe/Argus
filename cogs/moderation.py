@@ -15,14 +15,55 @@ class Moderation(commands.Cog):
         self.bot: commands.Bot = bot
 
     @commands.has_permissions(manage_webhooks=True)
+    @commands.slash_command(name="enable_moderation", description="Enable name checking for this server")
+    async def enable_moderation(self, ctx: Context, channel_to_log):
+        # first check if guild has enabled moderation
+        enabled = self.check_if_moderation_enabled(ctx)
+        if enabled:
+            await ctx.respond('Moderation has already been enabled!\n\nIf you would like to change '
+                              'the channel to log bans, please retrieve the current blacklist, then disable and'
+                              ' re-enable moderation!', ephemeral=True)
+            return
+        guild_id = ctx.guild.id
+        chID = channel_to_log[2:]
+        ch_id = chID[:-1]
+        await self.log_term(guild_id, ['bot', 'verification', 'giveaway', 'captcha'], ch_id)
+        await ctx.respond('This server has been enabled for moderation with default words bot, verification, giveaway, '
+                          'and captcha.\n\nArgus Premium is required to add and delete words!', ephemeral=True)
+
+    @commands.has_permissions(manage_webhooks=True)
+    @commands.slash_command(name="disable_moderation", description="Disable name checking for this server")
+    async def disable_moderation(self, ctx: Context):
+        guild_id = ctx.guild.id
+        found = False
+        with open("data/blacklist.json", "r") as _:
+            data = json.load(_)
+            for item in data:
+                if item['guild_id'] == guild_id:
+                    data.remove(item)
+                    found = True
+                    await ctx.respond('This server has been removed from our moderation tool!', ephemeral=True)
+        with open("data/blacklist.json", "w") as _:
+            json.dump(obj=data, fp=_, indent=4)
+        if not found:
+            await ctx.respond('Moderation must be enabled before being disabled!', ephemeral=True)
+
+    @commands.has_permissions(manage_webhooks=True)
     @commands.slash_command(name="add_to_blacklist", description="Separate words by comma, no spaces")
     @check(check_if_guild_has_premium)
-    async def add_to_blacklist(self, ctx: Context, blacklist, channel_to_log):
+    async def add_to_blacklist(self, ctx: Context, blacklist):
+        # first check if guild has enabled moderation
+        enabled = self.check_if_moderation_enabled(ctx)
+        if not enabled:
+            await ctx.respond('Moderation must be enabled first! Use /enable_moderation', ephemeral=True)
+            return
         blacklist = str(blacklist).split(',')
-        chID = channel_to_log[2:]
-        chID = chID[:-1]
-        await self.log_term(ctx.guild.id, blacklist, chID)
-        await ctx.respond(f'Terms {blacklist} added to blacklist.')
+        new_list = list()
+        # strip surrounding whitespace from words and place them in a new list
+        for item in blacklist:
+            new_list.append(item.strip())
+        await self.log_term(ctx.guild.id, new_list)
+        await ctx.respond(f'Terms {new_list} added to blacklist.', ephemeral=True)
 
     @add_to_blacklist.error
     async def add_to_blacklist_error(self, ctx: Context, error):
@@ -32,6 +73,11 @@ class Moderation(commands.Cog):
     @commands.slash_command(name="remove_from_blacklist", description="Separate words by comma, no spaces")
     @check(check_if_guild_has_premium)
     async def remove_from_blacklist(self, ctx: Context, terms):
+        # first check if guild has enabled moderation
+        enabled = self.check_if_moderation_enabled(ctx)
+        if not enabled:
+            await ctx.respond('Moderation must be enabled first! Use /enable_moderation', ephemeral=True)
+            return
         terms = str(terms).split(',')
         with open("data/blacklist.json", "r") as _:
             data = json.load(_)
@@ -49,11 +95,12 @@ class Moderation(commands.Cog):
                         i += 1
                     item["blacklist"] = curr_blacklist
                     if len(curr_blacklist) == init_len:
-                        ctx.respond('The words you entered were not found in the blacklist, removal failed.')
-                    elif (init_len-len(terms)) != len(curr_blacklist):
-                        ctx.respond('Not all terms were removed! Make sure you enter them correctly.')
+                        ctx.respond('The words you entered were not found in the blacklist, removal failed.',
+                                    ephemeral=True)
+                    elif (init_len - len(terms)) != len(curr_blacklist):
+                        ctx.respond('Not all terms were removed! Make sure you enter them correctly.', ephemeral=True)
                     else:
-                        await ctx.respond(f'{terms} removed from blacklist.')
+                        await ctx.respond(f'{terms} removed from blacklist.', ephemeral=True)
         with open("data/blacklist.json", "w") as _:
             json.dump(obj=data, fp=_, indent=4)
 
@@ -66,7 +113,7 @@ class Moderation(commands.Cog):
                                                               "to be in server members names")
     async def retrieve_blacklist(self, ctx: Context):
         blacklist = list(await self.get_blacklist(ctx.guild.id))
-        await ctx.respond(blacklist)
+        await ctx.respond(blacklist, ephemeral=True)
 
     @commands.Cog.listener("on_member_update")
     async def nick_change(self, before, after):
@@ -91,15 +138,22 @@ class Moderation(commands.Cog):
                     await self.send_log(member, term)
                     await member.guild.ban(member, reason=f'Changed nickname to contain {term}')
 
-    async def log_term(self, guild_id, blacklist, channel_to_log):
+    async def log_term(self, guild_id, blacklist, channel_to_log=None):
         with open("data/blacklist.json", "r", encoding="UTF-8") as _:
             data = json.load(_)
             found = False
-            new_set = {
-                "guild_id": guild_id,
-                "blacklist": blacklist,
-                "channel_id": channel_to_log
-            }
+            append_new = True  # used for when we are enabling a new server, otherwise changed to
+            # false when just adding new words to blacklist.
+
+            if channel_to_log is not None:
+                new_set = {
+                    "guild_id": guild_id,
+                    "blacklist": blacklist,
+                    "channel_id": channel_to_log
+                }
+            else:
+                new_set = None
+                append_new = False
 
             for set in data:
                 if set["guild_id"] == guild_id:
@@ -107,8 +161,9 @@ class Moderation(commands.Cog):
                         set["blacklist"].append(item)
                     found = True
 
-            if new_set not in data and not found:
-                data.append(new_set)
+            if append_new is True:
+                if new_set not in data and not found:
+                    data.append(new_set)
 
         with open("data/blacklist.json", "w", encoding="UTF-8") as _:
             json.dump(obj=data, fp=_, indent=4)
@@ -121,7 +176,7 @@ class Moderation(commands.Cog):
                 if set['guild_id'] == guild_id:
                     return set['blacklist']
             else:
-                return ["No members are currently blacklisted."]
+                return ["Moderation has not been enabled in this server."]
 
     async def get_chid(self, guild_id):
         with open("data/blacklist.json", "r") as _:
@@ -140,6 +195,18 @@ class Moderation(commands.Cog):
         chID = self.bot.get_channel(int(chID))
         await chID.send(embed=em)
 
+
+    def check_if_moderation_enabled(self, ctx: Context):
+        guild_id = ctx.guild.id
+
+        with open("data/blacklist.json", "r") as _:
+            data = json.load(_)
+
+            for item in data:
+                if item['guild_id'] == guild_id:
+                    return True
+
+            return False
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
