@@ -14,7 +14,7 @@ class reload(commands.Cog):
             name='reloadcocks420', description="Reload all/one of the bots cogs!"
         )
     @commands.has_permissions(ban_members=True)
-    async def reloadcocks420(self, ctx, cog=None):
+    async def reloadallcogs(self, ctx, cog=None):
         if not cog:
                 # No cog, means we reload all cogs
             async with ctx.typing():
