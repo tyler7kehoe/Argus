@@ -26,7 +26,7 @@ class Get(commands.Cog):
             await ctx.respond("You may not see this as you aren't staff",ephemeral=True)
         else:
             content = await get_input(user.id)
-            await ctx.respond(embed=embed_builder.embed_builder(f"Wallet: {user.name}", ctx.author, f"```{content}```", embed_builder.embed_color.NEUTRAL, "Coded by DabMan"),ephemeral=True)
+            await ctx.respond(embed=embed_builder.embed_builder(f"Wallet: {user.name}", ctx.author, f"```{content}```", embed_builder.embed_color.NEUTRAL),ephemeral=True)
 
 def setup(bot):
     bot.add_cog(Get(bot))
