@@ -3,7 +3,7 @@
 Commands this bot supports:
 
 - Custom giveaways
-- moderation tools for Discord mods (blacklist terms, auto webhook deletion)
+- Moderation tools for Discord mods (blacklist terms, auto webhook deletion)
 - Track opensea transactions for different collections in text channels
 - Run custom polls
 - Set up messages where roles can be selected by reacting to different emojis on the message
